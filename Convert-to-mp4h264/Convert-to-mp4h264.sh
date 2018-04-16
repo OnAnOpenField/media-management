@@ -5,9 +5,9 @@ VIDEO_BASEPATH="/path/to/base-video-folder"
 
 # simple function for handling fatal errors. (It outputs an error, and exits the program.)
 fatal() {
-    echo "[FATAL] $1";
-    echo "[FATAL] Program is now exiting.";
-    exit 1;
+    echo "[FATAL] $1"
+    echo "[FATAL] Program is now exiting."
+    exit 1
 }
 
 # Remux to mp4. $1 is original file
