@@ -55,6 +55,6 @@ while read -r file; do
 
     rm -f "$BAKFILE"
     chmod 777 "$FILENAME" # This step may no tbe neccessary, but hey why not.
-done <<< $(find "$VIDEO_BASEPATH" -type f -name "*.ts" -or -name "*.mp4" -or -name "*.mkv" -or -name "*.avi" -or -name "*.mp4" -or -name "*.m4v")
+done <<< $(find "$VIDEO_BASEPATH" -type f -name "*.ts" -or -name "*.mp4" -or -name "*.mkv" -or -name "*.avi" -or -name "*.m4v")
 
 Sleep 2
