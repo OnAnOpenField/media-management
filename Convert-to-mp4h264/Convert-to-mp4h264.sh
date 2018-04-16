@@ -47,7 +47,7 @@ while read -r file; do
     echo "********************************************************"
     echo "Transcoding, Converting to H.264 w/Handbrake"
     echo "********************************************************"
-    HandBrakeCLI -i "$BAKFILE" -f mp4 --aencoder copy -e qsv_h264 --x264-preset veryfast --x264-profile auto -q 16 --maxHeight 2160 --decomb bob -o "$TARGETFILE" || fatal "Handbreak has failed (Is it installed?)"
+    HandBrakeCLI -i "$BAKFILE" -f mp4 --aencoder copy -e qsv_h264 --x264-preset veryfast --x264-profile auto -q 16 --decomb bob -o "$TARGETFILE" || fatal "Handbreak has failed (Is it installed?)"
 
     echo "********************************************************"
     echo "Delete $BAKFILE"
