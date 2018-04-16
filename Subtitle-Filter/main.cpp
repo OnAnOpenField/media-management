@@ -1,3 +1,6 @@
+// This program will strip font color tags from subtitles and
+// delete subtitle lines with commonly used credit strings
+
 #include <fstream>
 #include <iostream>
 #include <string>
