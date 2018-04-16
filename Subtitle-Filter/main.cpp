@@ -1,4 +1,4 @@
-// This program will strip font color tags from subtitles and
+// This program will strip font color tags from SRT subtitles and
 // delete subtitle lines with commonly used credit strings
 
 #include <fstream>
