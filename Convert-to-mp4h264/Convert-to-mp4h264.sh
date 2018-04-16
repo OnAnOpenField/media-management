@@ -34,10 +34,10 @@ while read -r file; do
 	# check if file is H264 encoded. Skip conversion if true
 	[[ ${OUTPUT,,} =~ $AVCTrack ]] && continue
 	
-	EXT=${file##*.}                         	# Get file extension
-	TARGETFILE="${file//.$EXT/.mp4}"			# Set the output filename
-	BAKFILE="${file//.$EXT/.bak.$EXT}"      	# Set temporary file for transcoding
-	mv "$file" "$BAKFILE"                       # Rename original file to [name].bak.[ext]
+	EXT=${file##*.}									# Get file extension
+	TARGETFILE="${file//.$EXT/.mp4}"				# Set the output filename
+	BAKFILE="${file//.$EXT/.bak.$EXT}"				# Set temporary file for transcoding
+	mv "$file" "$BAKFILE"							# Rename original file to [name].bak.[ext]
 
 	# Uncomment if you want to adjust the bandwidth for this thread
 	#MYPID=$$    # Process ID for current script
