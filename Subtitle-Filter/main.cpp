@@ -27,6 +27,7 @@ int main() {
 	std::ofstream wLogfile(logFilename, std::ios::trunc);
 	wLogfile.close();
 
+	// open blacklist file for reading
 	std::ifstream rBlacklistFile(blacklistFilename);
 	if (!rBlacklistFile.good()) {
 		cout << "File " << getBasename(blacklistFilename) << " can't be read from.\n";
