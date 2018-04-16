@@ -1,5 +1,6 @@
 // This program will strip font color tags from SRT subtitles and
 // delete subtitle lines with commonly used credit strings
+// Also removes HI (SDH) text using the windows app Subtitle Edit's commandline tool
 
 #include <fstream>
 #include <iostream>
