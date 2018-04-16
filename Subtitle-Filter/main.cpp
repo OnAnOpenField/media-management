@@ -36,6 +36,7 @@ int main() {
 		exit(1);
 	}
 
+	// Open SRT file list for reading
 	std::ifstream rSublistFile(sublistFilename);
 	if (!rSublistFile.good()) {
 		cout << "File '" << getBasename(sublistFilename) << "' can't be read from.\n";
