@@ -3,21 +3,6 @@
 # Base video folder to start in
 VIDEO_BASEPATH="/path/to/base-video-folder"
 
-# simple function for handling fatal errors. (It outputs an error, and exits the program.)
-fatal() {
-	echo "[FATAL] $1"
-	echo "[FATAL] Program is now exiting."
-	exit 1
-}
-
-# Remux to mp4. $1 is original file
-startRemux() {
-	EXT="${1##*.}"
-	TARGETFILE="${1//.$EXT/.mp4}"
-	ffmpeg -i "$1" -c copy "$TARGETFILE"
-	rm -f "$1"
-}
-
 [[ ! -d "$VIDEO_BASEPATH" ]] && fatal "Directory $VIDEO_BASEPATH does not exist. Make sure to set the directory inside the script."
 AVCTrack="video: h264"
 
@@ -56,3 +41,18 @@ while read -r file; do
 	rm -f "$BAKFILE"
 	chmod 777 "$TARGETFILE" # This step may not be necessary, but hey why not.
 done <<< $(find "$VIDEO_BASEPATH" -type f -name "*.ts" -or -name "*.mp4" -or -name "*.mkv" -or -name "*.avi" -or -name "*.m4v")
+
+# simple function for handling fatal errors. (It outputs an error, and exits the program.)
+fatal() {
+	echo "[FATAL] $1"
+	echo "[FATAL] Program is now exiting."
+	exit 1
+}
+
+# Remux to mp4. $1 is original file
+startRemux() {
+	EXT="${1##*.}"
+	TARGETFILE="${1//.$EXT/.mp4}"
+	ffmpeg -i "$1" -c copy "$TARGETFILE"
+	rm -f "$1"
+}
