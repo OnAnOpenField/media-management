@@ -22,7 +22,6 @@ bool isSDHBracketed(const std::vector<std::string> & subblock);
 bool isTimeStamp(const std::string & sTest);
 void strip(std::string &filepath);
 std::string getBasename(const std::string &filepath);
-std::string str(const int &num);
 bool isFullyEmpty(const std::string & sTest);
 
 #endif

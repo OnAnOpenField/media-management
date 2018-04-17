@@ -232,12 +232,6 @@ std::string getBasename(const std::string & filepath) {
 	return filepath;
 }
 
-std::string str(const int & num) {
-	std::stringstream ss;
-	ss << num;
-	return ss.str();
-}
-
 bool isFullyEmpty(const std::string & sTest) {
 	for (int i = 0; i < sTest.size(); ++i) {
 		if (!isspace(sTest[i])) {
