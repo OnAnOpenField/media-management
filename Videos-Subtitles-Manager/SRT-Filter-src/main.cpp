@@ -6,7 +6,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <windows.h>
 using std::cin;
 using std::cout;
 
