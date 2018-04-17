@@ -1,7 +1,7 @@
 #include "SubFilter.h"
 
 // remove subtitle credits and strip font color tags
-bool filterSubfile(const std::string &subFilename, const std::vector<std::string> &blacklist, const std::string & logFilename) {
+bool filterSubfile(const std::string &subFilename, const std::vector<std::string> &blacklist, const std::string & logFilename, std::ofstream & wLogfile) {
 	std::vector <std::string> subfileContents;
 	std::vector <std::string> subblock;
 	std::vector <std::string> subblock_old;
@@ -23,13 +23,6 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 		subfileContents.push_back(sTemp);
 	}
 	rSubfile.close();
-
-	//open log file for writing
-	std::ofstream wLogfile(logFilename, std::ios::app);
-	if (!wLogfile.good()) {
-		std::cerr << "'" << getBasename(logFilename) << "' could not be opened for writing\n";
-		return false;
-	}
 
 	bool subfileisSDH = isSDHBracketed(subfileContents);
 	bool subfileIsDirty = isSubblockDirty(blacklist, subfileContents);
@@ -127,6 +120,32 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 	}
 
 	return true;
+}
+
+std::string getIniValue(const std::string & iniParam) {
+	std::ifstream rIniFile("config.ini");
+	if (!rIniFile.good()) {
+		cout << "'config.ini' not found. Press Enter to continue\n.";
+		cin.get();
+		exit(1);
+	}
+
+	std::string sTemp;
+
+	while (std::getline(rIniFile, sTemp)) {
+		if (sTemp.find(iniParam) != std::string::npos) {
+			for (int i = iniParam.size(); i < sTemp.size(); ++i) {
+				if (!isspace(sTemp[i]) && sTemp[i] != '=') {
+					return sTemp.substr(i, sTemp.size() - 1);
+				}
+			}
+		}
+	}
+
+	cout << iniParam << " not found in config.ini\n"
+		<< "Exiting. Press Enter to continue.\n";
+	cin.get();
+	exit(1);
 }
 
 bool isSubblockDirty(const std::vector <std::string> & blacklist, std::vector<std::string> subblock) {

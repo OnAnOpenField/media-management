@@ -20,18 +20,17 @@ int main() {
 	int totalFiles = 0;
 	std::string sTemp;
 	std::vector<std::string> blacklist;
-	std::string blacklistFilename = "F:/Users/Mauri/Videos/WordBlacklist.txt";
-	std::string sublistFilename = "F:/Users/Mauri/Videos/RecentlyCreatedSubFiles.txt";
-	std::string logFilename = "F:/Users/Mauri/Videos/SubFilter.log";
+	std::string blacklistFilename = getIniValue("SubCreditsListPath");
+	std::string sublistFilename = getIniValue("RecentSubsPath");
+	std::string logFilename = getIniValue("LogFilePath");
 
 	std::ofstream wLogfile(logFilename, std::ios::trunc);
-	wLogfile.close();
 
 	// open blacklist file for reading
 	std::ifstream rBlacklistFile(blacklistFilename);
 	if (!rBlacklistFile.good()) {
 		cout << "File " << getBasename(blacklistFilename) << " can't be read from.\n";
-		cout << "Press Enter to continue.\n";
+		cout << "Exiting. Press Enter to continue.\n";
 		cin.get();
 		exit(1);
 	}
@@ -40,7 +39,7 @@ int main() {
 	std::ifstream rSublistFile(sublistFilename);
 	if (!rSublistFile.good()) {
 		cout << "File '" << getBasename(sublistFilename) << "' can't be read from.\n";
-		cout << "Press Enter to continue.\n";
+		cout << "Exiting. Press Enter to continue.\n";
 		cin.get();
 		exit(1);
 	}
@@ -66,13 +65,13 @@ int main() {
 		if (!sTemp.empty()) {
 			blacklist.push_back(sTemp);
 		}
-		filesFiltered += filterSubfile(subFilename, blacklist, logFilename);
+		filesFiltered += filterSubfile(subFilename, blacklist, logFilename, wLogfile);
 		++processedFiles;
 		cout << processedFiles << " of " << totalFiles << " files processed. \r";
 	}
 
 	cout << filesFiltered << " of " << processedFiles << " files were filtered.\n\nDone.\n";
+	wLogfile << filesFiltered << " of " << processedFiles << " files were filtered.\n\nDone.\n";
 	cout << "Press Enter to continue.\n";
-	cin.get();
 	return 0;
 }

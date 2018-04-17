@@ -10,7 +10,8 @@
 using std::cin;
 using std::cout;
 
-bool filterSubfile(const std::string &subFilename, const std::vector<std::string> &blacklist, const std::string & logFilename);
+bool filterSubfile(const std::string &subFilename, const std::vector<std::string> &blacklist, const std::string & logFilename, std::ofstream & wLogfile);
+std::string getIniValue(const std::string & iniParam);
 bool isSubblockDirty(const std::vector <std::string> & blacklist, std::vector<std::string> subblock);
 void removeEmptySubLines(std::vector <std::string> & subblock);
 std::string getEpisodeStr(const std::string & subFilename);
