@@ -125,7 +125,7 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 std::string getIniValue(const std::string & iniParam) {
 	std::ifstream rIniFile("config.ini");
 	if (!rIniFile.good()) {
-		cout << "'config.ini' not found. Press Enter to continue\n.";
+		cout << "'config.ini' not found. Press Enter to continue.\n";
 		cin.get();
 		exit(1);
 	}
@@ -133,7 +133,7 @@ std::string getIniValue(const std::string & iniParam) {
 	std::string sTemp;
 
 	while (std::getline(rIniFile, sTemp)) {
-		if (sTemp.find(iniParam) != std::string::npos) {
+		if (sTemp.find(iniParam) == 0) {
 			for (int i = iniParam.size(); i < sTemp.size(); ++i) {
 				if (!isspace(sTemp[i]) && sTemp[i] != '=') {
 					return sTemp.substr(i, sTemp.size() - 1);

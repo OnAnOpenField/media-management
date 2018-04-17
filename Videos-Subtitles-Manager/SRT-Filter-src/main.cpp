@@ -69,8 +69,7 @@ int main() {
 		cout << processedFiles << " of " << totalFiles << " files processed. \r";
 	}
 
-	cout << filesFiltered << " of " << processedFiles << " files were filtered.\n\nDone.\n";
-	wLogfile << filesFiltered << " of " << processedFiles << " files were filtered.\n\nDone.\n";
-	cout << "Press Enter to continue.\n";
+	cout << filesFiltered << " of " << processedFiles << " files were filtered.\n";
+	wLogfile << filesFiltered << " of " << processedFiles << " files were filtered.";
 	return 0;
 }
