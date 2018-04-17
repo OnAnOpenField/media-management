@@ -1,6 +1,9 @@
 import subprocess
 import os
 
+VIDEO_BASEPATH = '/path/to/base-video-folder'
+AVCTrack = 'video: h264'
+
 # simple function for handling fatal errors. (It outputs an error, and exits the program.)
 def fatal(exitMsg):
     print('[FATAL] ' + exitMsg)
@@ -19,6 +22,10 @@ def startRemux(file):
     os.remove(file)
 
 def main():
+    # check if path provided exists
+    if not os.path.isdir(VIDEO_BASEPATH):
+        fatal(VIDEO_BASEPATH + " is not a directory. Make sure to set the path inside the script.")
+
     fileList = []
     # searches for video files with specified extensions
     for root, dirs, files in os.walk(VIDEO_BASEPATH):
@@ -55,11 +62,6 @@ def main():
 
         print('** Deleting ' + BAKFILE)
         os.remove(BAKFILE)
-
-VIDEO_BASEPATH = '/path/to/base-video-folder'
-AVCTrack = 'video: h264'
-if not os.path.isdir(VIDEO_BASEPATH):
-    fatal(VIDEO_BASEPATH + " is not a directory. Make sure to set the path inside the script.")
 
 if __name__ == '__main__':
     main()
