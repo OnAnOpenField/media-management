@@ -5,18 +5,18 @@ VIDEO_BASEPATH = '/path/to/base-video-folder'
 AVCTrack = 'video: h264'
 
 # simple function for handling fatal errors. (It outputs an error, and exits the program.)
-def fatal(exitMsg):
-    print('[FATAL] ' + exitMsg)
+def fatal(errMsg):
+    print('[FATAL] ' + errMsg)
     print('[FATAL] Program is now exiting.')
     exit()
 
 # Remux to mp4.
-def startRemux(file):
+def beginRemux(file):
     filename, EXT = os.path.splitext(file)
-    TARGETFILE = file.replace('.' + EXT, '.mp4')
+    TARGETFILE = file.replace(EXT, '.mp4')
 
     errcode = subprocess.call('ffmpeg -i "' + file + '" -c copy "' + TARGETFILE + '"', shell=True)
-    if errcode == 1:
+    if errcode != 0:
         fatal('ffmpeg has failed. Is it installed?')
 
     os.remove(file)
@@ -43,7 +43,7 @@ def main():
 
         # check if file is H264 and not mp4. Remux if true
         if AVCTrack in OUTPUT.lower() and not file.endswith('.mp4'):
-            startRemux(file)
+            beginRemux(file)
             continue
 
         # check if file is H264 encoded. Skip conversion if true
@@ -57,7 +57,7 @@ def main():
 
         print('** Transcoding, Converting to H.264 w/Handbrake')
         errcode = subprocess.call('HandBrakeCLI -i "' + BAKFILE + '" -f mp4 --aencoder copy -e qsv_h264 --x264-preset veryfast --x264-profile auto -q 16 --decomb bob -o "' + TARGETFILE + '"', shell=True)
-        if errcode == 1:
+        if errcode != 0:
             fatal("HandBrakeCLI has failed. Is it installed?")
 
         print('** Deleting ' + BAKFILE)
