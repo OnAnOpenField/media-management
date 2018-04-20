@@ -2,7 +2,6 @@
 
 # Base video folder to start in
 VIDEO_BASEPATH="/path/to/base-video-folder"
-[[ ! -d "$VIDEO_BASEPATH" ]] && fatal "Directory $VIDEO_BASEPATH does not exist. Make sure to set the directory inside the script."
 
 AVCTRACK="avc/h.264"
 
