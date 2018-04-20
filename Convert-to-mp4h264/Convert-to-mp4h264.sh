@@ -1,8 +1,10 @@
 #!/bin/bash
 
+#Based on Github user @nebhead 's original work
+
 # Base video folder to start in
 VIDEO_BASEPATH="/path/to/base-video-folder"
-
+# string to check in mkvmerge -i "$file" shell output to determine if file is h264 encoded
 AVCTRACK="avc/h.264"
 
 # simple function for handling fatal errors. (It outputs an error, and exits the program.)
@@ -18,10 +20,10 @@ remux() {
 	echo "Remuxing $1"
 	echo "********************************************************"
 	
-	EXT="${1##*.}"
-	TARGETFILE="${1//.$EXT/.mp4}"
+	EXT="${1##*.}"									# Get file extension
+	TARGETFILE="${1//.$EXT/.mp4}"					# Set target file
 	ffmpeg -i "$1" -c copy "$TARGETFILE"
-	rm -f "$1"
+	rm -f "$1"										# Remove original file
 }
 
 # re encode to mp4 h264. 
@@ -42,8 +44,8 @@ reencode() {
 	# begin conversion
 	HandBrakeCLI -i "$1" -f mp4 --aencoder copy -e qsv_h264 --x264-preset medium --x264-profile auto -q 18 --decomb bob -o "$TEMPFILE" || fatal "Handbreak has failed (Is it installed?)"
 
-	rm -f "$1"
-	mv "$TEMPFILE" "$TARGETFILE"
+	rm -f "$1"										# Remove original file
+	mv "$TEMPFILE" "$TARGETFILE"					# Rename conversion output file to [original name].mp4
 	# chmod 777 "$TARGETFILE" # This step may not be necessary, but hey why not.
 }
 
