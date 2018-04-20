@@ -30,6 +30,7 @@ reencode() {
 	echo "********************************************************"
 	echo "Re-encoding $1"
 	echo "********************************************************"
+	
 	EXT=${1##*.}									# Get file extension
 	TEMPFILE="${1//.$EXT/.TEMP.mp4}"				# Set temporary output file
 	TARGETFILE="${1//.$EXT/.mp4}"					# Set target file
@@ -38,10 +39,6 @@ reencode() {
 	#MYPID=$$    # Process ID for current script
 	# Adjust niceness of CPU priority for the current process
 	#renice 19 $MYPID
-
-	echo "********************************************************"
-	echo "Re-encoding to MP4 H.264"
-	echo "********************************************************"
 	
 	# begin conversion
 	HandBrakeCLI -i "$1" -f mp4 --aencoder copy -e qsv_h264 --x264-preset medium --x264-profile auto -q 18 --decomb bob -o "$TEMPFILE" || fatal "Handbreak has failed (Is it installed?)"
