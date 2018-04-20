@@ -16,7 +16,7 @@ fatal() {
 # Remux to mp4. $1
 remux() {
 	echo "********************************************************"
-	echo "Remuxing"
+	echo "Remuxing $1"
 	echo "********************************************************"
 	
 	EXT="${1##*.}"
@@ -27,7 +27,9 @@ remux() {
 
 # re encode to mp4 h264. 
 reencode() {
-	echo "re encoding $1"
+	echo "********************************************************"
+	echo "Re-encoding $1"
+	echo "********************************************************"
 	EXT=${1##*.}									# Get file extension
 	TEMPFILE="${1//.$EXT/.TEMP.mp4}"				# Set temporary output file
 	TARGETFILE="${1//.$EXT/.mp4}"					# Set target file
