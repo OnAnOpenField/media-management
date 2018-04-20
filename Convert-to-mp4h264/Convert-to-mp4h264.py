@@ -1,6 +1,5 @@
 import subprocess
 import os
-import time
 
 VIDEO_BASEPATH = '/path/to/base-video-folder'
 AVCTRACK = 'avc/h.264'
