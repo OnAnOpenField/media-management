@@ -1,6 +1,8 @@
 import subprocess
 import os
 
+# Based on Github user @nebhead 's original bash script
+
 VIDEO_BASEPATH = '/path/to/base-video-folder'
 AVCTRACK = 'avc/h.264'
 
@@ -21,7 +23,7 @@ def reencode(FILE):
     TEMPFILE = FILE.replace(EXT, '.TEMP.mp4')  # Set set temporary output filename
     TARGETFILE = TEMPFILE.replace('.TEMP.mp4', '.mp4') # set target filename
 
-    FFMPEG_COMMAND = 'ffmpeg -i "' + FILE + '" -c:v libx264 -crf 18 -preset:v medium -c:a copy "' + TEMPFILE + '"'
+    FFMPEG_COMMAND = 'ffmpeg -i "' + FILE + '" -vf yadif -c:v libx264 -crf 18 -preset:v medium -c:a copy "' + TEMPFILE + '"'
     HANDBRAKE_COMMAND = 'HandBrakeCLI -i "' + FILE + '" -f mp4 --aencoder copy -e qsv_h264 --x264-preset medium --x264-profile auto -q 18 --decomb bob -o "' + TEMPFILE + '"'
 
     print('** Transcoding, Converting to H.264')
