@@ -18,24 +18,24 @@ def processMKV(FILE):
     output = bOutput.decode()
     outputlines = output.split(sysEOL)
 
-    nTrack = -1
-    AUDIO_REG = re.compile(r'track id [0-9]+: audio', re.IGNORECASE)
-    hasUnwantedAud = False
     hasWantedAud = False
+    hasUnwantedAud = False
     hasSubs = False
     param = ''
+    AUDIO_REG = re.compile(r'track id [0-9]+: audio', re.IGNORECASE)
+    nTrack = -1
 
     for line in outputlines:
         m = AUDIO_REG.match(line)
-        if m and not lineContains(line, 'language:und', 'language:eng') or lineContains(line, 'commentary'):
+        if m and not 'language:eng' in line.lower() and not 'language:und' in line.lower() or 'commentary' in line.lower():
             hasUnwantedAud = True
-        if lineContains(line, 'subtitles'):
+        if 'subtitles' in line.lower():
             hasSubs = True
 
     if hasUnwantedAud:
         for line in outputlines:
             m = AUDIO_REG.match(line)
-            if m and lineContains(line, 'language:eng') and not lineContains(line, 'commentary'):
+            if m and 'language:eng' in line.lower() and not 'commentary' in line.lower():
                 hasWantedAud = True
                 break
             nTrack += 1
@@ -49,11 +49,6 @@ def processMKV(FILE):
         subprocess.call('mkvmerge -o "' + TEMPFILE + '" ' + param + ' "' + FILE + '"', shell=True)
         os.remove(FILE)
         os.rename(TEMPFILE, FILE)
-
-def lineContains(line, *tup):
-    for str in tup:
-        if not str in line.lower(): return False
-    return True
 
 def main():
     if not os.path.isfile('config.ini'): fatal('Cannot find \'config.ini\'')
@@ -78,3 +73,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+    print('\nDone')
+    time.sleep(2)
