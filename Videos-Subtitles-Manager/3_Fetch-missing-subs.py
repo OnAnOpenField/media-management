@@ -34,9 +34,8 @@ def main():
 
     if not os.path.isfile(RECENT_VIDEOFILES_PATH): fatal(RECENT_VIDEOFILES_PATH + ' not found. Make sure to set the config.ini')
 
-    if honorSubsBlacklist and not os.path.isfile(NOSUBS_LIST_PATH):
-        fatal(NOSUBS_LIST_PATH + ' not found. Make sure to set the config.ini')
-    elif honorSubsBlacklist:
+    if honorSubsBlacklist:
+        if not os.path.isfile(NOSUBS_LIST_PATH): fatal(NOSUBS_LIST_PATH + ' not found. Make sure to set the config.ini')
         noSubsList = io.open(NOSUBS_LIST_PATH, 'r', encoding='utf_8_sig').read().split('\n')
         while '' in noSubsList: noSubsList.remove('')
 
@@ -51,5 +50,8 @@ def main():
         elif not honorSubsBlacklist:
             fetchSubs(file)
 
+    print('\nDone')
 if __name__ == '__main__':
     main()
+    print('\nDone')
+    time.sleep(2)
