@@ -50,7 +50,6 @@ def main():
         elif not honorSubsBlacklist:
             fetchSubs(file)
 
-    print('\nDone')
 if __name__ == '__main__':
     main()
     print('\nDone')
