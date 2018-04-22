@@ -13,16 +13,16 @@ def fatal(errMsg):
     time.sleep(2)
     exit()
 
-def processMKV(FILE):
-    bOutput = subprocess.check_output('mkvmerge --identify-verbose "' + FILE + '"', shell=True)
+def processMKV(file):
+    bOutput = subprocess.check_output('mkvmerge --identify-verbose "' + file + '"', shell=True)
     output = bOutput.decode()
     outputlines = output.split(sysEOL)
 
+    AUDIO_REG = re.compile(r'track id [0-9]+: audio', re.IGNORECASE)
     hasWantedAud = False
     hasUnwantedAud = False
     hasSubs = False
     param = ''
-    AUDIO_REG = re.compile(r'track id [0-9]+: audio', re.IGNORECASE)
     nTrack = -1
 
     for line in outputlines:
@@ -44,11 +44,11 @@ def processMKV(FILE):
     if hasSubs: param += ' -S'
 
     if param:
-        TEMPFILE = FILE.replace('.mkv', '.TEMP.mkv')
-        print('\nDeleting embedded subs and/or unwnated audio from ' + os.path.basename(FILE) + '\n')
-        subprocess.call('mkvmerge -o "' + TEMPFILE + '" ' + param + ' "' + FILE + '"', shell=True)
-        os.remove(FILE)
-        os.rename(TEMPFILE, FILE)
+        TEMPFILE = file.replace('.mkv', '.TEMP.mkv')
+        print('\nDeleting embedded subs and/or unwnated audio from ' + os.path.basename(file) + '\n')
+        subprocess.call('mkvmerge -o "' + TEMPFILE + '" ' + param + ' "' + file + '"', shell=True)
+        os.remove(file)
+        os.rename(TEMPFILE, file)
 
 def main():
     if not os.path.isfile('config.ini'): fatal('Cannot find \'config.ini\'')

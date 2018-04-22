@@ -30,24 +30,24 @@ def main():
 
     # recursively walk through tv shows path and common video files
     currTime = time.time()
-    for root, dirs, files in os.walk(TVSHOWS_PATH):
-        for filename in files:
+    for ROOT, DIRS, FILENAMES in os.walk(TVSHOWS_PATH):
+        for filename in FILENAMES:
             if filename.endswith('.mp4') or filename.endswith('.mkv') or filename.endswith('.avi') or filename.endswith('.m4v') or filename.endswith('.ts'):
-                filefound = os.path.join(root,filename)
-                crTime = os.path.getctime(filefound)
+                file = os.path.join(ROOT, filename)
+                crTime = os.path.getctime(file)
                 if ((currTime-crTime)/(60*60*24)) <= MAX_AGE:
-                    print('Added ' + os.path.basename(filefound))
-                    wfile.write(filefound + '\n')
+                    print('Added ' + os.path.basename(file))
+                    wfile.write(file + '\n')
 
     # recursively walk through movies path and find common video files
-    for root, dirs, files in os.walk(MOVIES_PATH):
-        for filename in files:
+    for ROOT, DIRS, FILENAMES in os.walk(MOVIES_PATH):
+        for filename in FILENAMES:
             if filename.endswith('.mp4') or filename.endswith('.mkv') or filename.endswith('.avi') or filename.endswith('.m4v') or filename.endswith('.ts'):
-                filefound = os.path.join(root,filename)
-                crTime = os.path.getctime(filefound)
+                file = os.path.join(ROOT, filename)
+                crTime = os.path.getctime(file)
                 if ((currTime-crTime)/(60*60*24)) <= MAX_AGE:
-                    print('Added ' + os.path.basename(filefound))
-                    wfile.write(filefound + '\n')
+                    print('Added ' + os.path.basename(file))
+                    wfile.write(file + '\n')
 
 
 if __name__ == '__main__':

@@ -22,45 +22,45 @@ def lineContains(line, *tup):
         if not str in line.lower(): return False
     return True
 
-def beginExtraction(FILE, extractForcedSubs):
-    filename, EXT = os.path.splitext(FILE)
-    bOutput = subprocess.check_output('mkvmerge --identify-verbose "' + FILE + '"', shell=True)
+def beginExtraction(file, EXTRACT_FORCEDSUBS):
+    filename, ext = os.path.splitext(file)
+    bOutput = subprocess.check_output('mkvmerge --identify-verbose "' + file + '"', shell=True)
     output = bOutput.decode()
     outputlines = output.split(sysEOL)
 
     nTrack = -1
     # Extract english sub, no forced, no SDH
     for line in outputlines:
-        if not os.path.isfile(FILE.replace(EXT, '.eng.srt')) and lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:0') and not 'track_name:sdh' in line.lower():
+        if not os.path.isfile(file.replace(ext, '.eng.srt')) and lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:0') and not 'track_name:sdh' in line.lower():
             print('')
-            subprocess.call('mkvextract tracks "' + FILE + '" ' + str(nTrack) + ':"' + FILE.replace(EXT, '.eng.srt' + '"'), shell=True)
+            subprocess.call('mkvextract tracks "' + file + '" ' + str(nTrack) + ':"' + file.replace(ext, '.eng.srt' + '"'), shell=True)
             print('')
         nTrack += 1
 
     nTrack = -1
     # If previous extraction failed, extract english SDH sub, no forced
     for line in outputlines:
-        if not os.path.isfile(FILE.replace(EXT, '.eng.srt')) and lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:0', 'track_name:sdh'):
+        if not os.path.isfile(file.replace(ext, '.eng.srt')) and lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:0', 'track_name:sdh'):
             print('')
-            subprocess.call('mkvextract tracks "' + FILE + '" ' + str(nTrack) + ':"' + FILE.replace(EXT, '.eng.srt' + '"'), shell=True)
+            subprocess.call('mkvextract tracks "' + file + '" ' + str(nTrack) + ':"' + file.replace(ext, '.eng.srt' + '"'), shell=True)
             print('')
         nTrack += 1
 
     nTrack = -1
     # In spite of previous extractions, and if allowed by the config.ini, extract english forced sub
     for line in outputlines:
-        if extractForcedSubs and not os.path.isfile(FILE.replace(EXT, '.FORCED.eng.srt')) and lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:1'):
+        if EXTRACT_FORCEDSUBS and not os.path.isfile(file.replace(ext, '.FORCED.eng.srt')) and lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:1'):
             print('')
-            subprocess.call('mkvextract tracks "' + FILE + '" ' + str(nTrack) + ':"' + FILE.replace(EXT, 'FORCED.eng.srt' + '"'), shell=True)
+            subprocess.call('mkvextract tracks "' + file + '" ' + str(nTrack) + ':"' + file.replace(ext, 'FORCED.eng.srt' + '"'), shell=True)
             print('')
         nTrack += 1
 
     nTrack = -1
     # If previous extractions failed, extract undefined language sub, no forced, allow SDH
     for line in outputlines:
-        if not os.path.isfile(FILE.replace(EXT, '.eng.srt')) and lineContains(line, 'language:und', 'subrip/srt', 'forced_track:0'):
+        if not os.path.isfile(file.replace(ext, '.eng.srt')) and lineContains(line, 'language:und', 'subrip/srt', 'forced_track:0'):
             print('')
-            subprocess.call('mkvextract tracks "' + FILE + '" ' + str(nTrack) + ':"' + FILE.replace(EXT, '.UND.eng.srt' + '"'), shell=True)
+            subprocess.call('mkvextract tracks "' + file + '" ' + str(nTrack) + ':"' + file.replace(ext, '.UND.eng.srt' + '"'), shell=True)
             print('')
         nTrack += 1
 
@@ -71,14 +71,14 @@ def main():
     config.read('config.ini')
 
     # get values from config file
-    honorSubsBlacklist = config['DEFAULT']['HonorSubsBlacklist'] == 'true'
-    extractForcedSubs = config['DEFAULT']['ExtractForcedSubs'] == 'true'
+    HONOR_SUBSBLACKLIST = config['DEFAULT']['HonorSubsBlacklist'] == 'true'
+    EXTRACT_FORCEDSUBS = config['DEFAULT']['ExtractForcedSubs'] == 'true'
     RECENT_VIDEOFILES_PATH = config['Paths']['RecentVideosPath']
-    if honorSubsBlacklist: NOSUBS_LIST_PATH = config['Paths']['NoSubsListPath']
+    if HONOR_SUBSBLACKLIST: NOSUBS_LIST_PATH = config['Paths']['NoSubsListPath']
 
     if not os.path.isfile(RECENT_VIDEOFILES_PATH): fatal(RECENT_VIDEOFILES_PATH + ' not found. Make sure to set the config.ini')
 
-    if honorSubsBlacklist:
+    if HONOR_SUBSBLACKLIST:
         if not os.path.isfile(NOSUBS_LIST_PATH): fatal(NOSUBS_LIST_PATH + ' not found. Make sure to set the config.ini')
         noSubsList = io.open(NOSUBS_LIST_PATH, 'r', encoding='utf_8_sig').read().split('\n')
         while '' in noSubsList: noSubsList.remove('')
@@ -92,10 +92,10 @@ def main():
     for file in fileList:
         nCount += 1
         print('Analyzing file ', nCount, ' of ', nFiles, ': ', os.path.basename(file))
-        if honorSubsBlacklist and not isPathBlacklisted(file, noSubsList):
-            beginExtraction(file, extractForcedSubs)
-        elif not honorSubsBlacklist:
-            beginExtraction(file, extractForcedSubs)
+        if HONOR_SUBSBLACKLIST and not isPathBlacklisted(file, noSubsList):
+            beginExtraction(file, EXTRACT_FORCEDSUBS)
+        elif not HONOR_SUBSBLACKLIST:
+            beginExtraction(file, EXTRACT_FORCEDSUBS)
 
 if __name__ == '__main__':
     main()

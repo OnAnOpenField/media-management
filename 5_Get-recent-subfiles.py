@@ -25,29 +25,29 @@ def main():
     if not os.path.isdir(MOVIES_PATH): fatal(MOVIES_PATH + ' not found. Make sure to set the config.ini')
 
     # open file for writing
-    print('Getting recent sub files\n')
+    print('Getting recent sub FILENAMES\n')
     wfile = io.open(RECENT_SUBFILES_TXT, 'w', encoding='utf_8_sig')
 
-    # recursively walk through tv shows path and find srt files
+    # recursively walk through tv shows path and find srt FILENAMES
     currTime = time.time()
-    for root, dirs, files in os.walk(TVSHOWS_PATH):
-        for filename in files:
+    for ROOT, DIRS, FILENAMES in os.walk(TVSHOWS_PATH):
+        for filename in FILENAMES:
             if filename.endswith('.srt'):
-                filefound = os.path.join(root,filename)
-                crTime = os.path.getctime(filefound)
+                file = os.path.join(ROOT, filename)
+                crTime = os.path.getctime(file)
                 if ((currTime-crTime)/(60*60*24)) <= MAX_AGE:
-                    print('Added ' + os.path.basename(filefound))
-                    wfile.write(filefound + '\n')
+                    print('Added ' + os.path.basename(file))
+                    wfile.write(file + '\n')
 
-    # recursively walk through movies path and find srt files
-    for root, dirs, files in os.walk(MOVIES_PATH):
-        for filename in files:
+    # recursively walk through movies path and find srt FILENAMES
+    for ROOT, DIRS, FILENAMES in os.walk(MOVIES_PATH):
+        for filename in FILENAMES:
             if filename.endswith('.srt'):
-                filefound = os.path.join(root,filename)
-                crTime = os.path.getctime(filefound)
+                file = os.path.join(ROOT, filename)
+                crTime = os.path.getctime(file)
                 if ((currTime-crTime)/(60*60*24)) <= MAX_AGE:
-                    print('Added ' + os.path.basename(filefound))
-                    wfile.write(filefound + '\n')
+                    print('Added ' + os.path.basename(file))
+                    wfile.write(file + '\n')
 
 if __name__ == '__main__':
     main()
