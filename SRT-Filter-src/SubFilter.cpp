@@ -40,7 +40,7 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 	//check if subs are dirty or has color tags
 	if (!subfileHasCredits && !subfileisColorTagged) {
 		if (subfileisSDH) {
-			std::string sCommand = "SubtitleEdit /convert \"" + subFilename + "\" SubRip /overwrite /fixcommonerrors /redocasing /removetextforhi > nul";
+			std::string sCommand = "SubtitleEdit /convert \"" + subFilename + "\" SubRip /overwrite /removetextforhi > nul";
 			system(sCommand.c_str());
 			cout << "Removed SDH text from " << getBasename(subFilename) << "\n";
 			wLogfile << "Removed SDH text from " << getBasename(subFilename) << "\n";
