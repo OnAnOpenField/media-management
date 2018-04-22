@@ -71,6 +71,5 @@ int main() {
 
 	cout << filesFiltered << " of " << processedFiles << " files were filtered.\n";
 	wLogfile << filesFiltered << " of " << processedFiles << " files were filtered.";
-	cin.get();
 	return 0;
 }
