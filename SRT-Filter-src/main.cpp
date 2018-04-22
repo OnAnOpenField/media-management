@@ -21,19 +21,19 @@ int main() {
 
 	std::ofstream wLogfile(logFilename, std::ios::trunc);
 	if (!wLogfile.good()) {
-		fatal("File \"" + getBasename(logFilename) + "\" can't be read from.\n")
+		fatal("File \"" + getBasename(logFilename) + "\" can't be read from.\n");
 	}
 
 	// open creditslist file for reading
 	std::ifstream rCreditslistFile(creditslistFilename);
 	if (!rCreditslistFile.good()) {
-		fatal("File \"" + getBasename(creditslistFilename) + "\" can't be read from.\n")
+		fatal("File \"" + getBasename(creditslistFilename) + "\" can't be read from.\n");
 	}
 
 	// Open SRT file list for reading
 	std::ifstream rSublistFile(sublistFilename);
 	if (!rSublistFile.good()) {
-		fatal("File \"" + getBasename(sublistFilename) + "\" can't be read from.\n")
+		fatal("File \"" + getBasename(sublistFilename) + "\" can't be read from.\n");
 	}
 
 	// read from creditslist txt
