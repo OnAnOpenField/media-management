@@ -5,11 +5,7 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 	std::vector<std::vector<std::string>> toProceedBoolList;
 	std::vector<std::string> subfileContents;
 	std::vector<std::vector<std::string>> newSubfileContents;
-	std::vector<std::string> subblock;
-	std::vector<std::string> subblock_old;
 	std::string sTemp;
-	int lineNum = 1;
-	int wLineNum = 1;
 
 	//open sub file for reading
 	std::ifstream rSubfile(subFilename);
@@ -35,30 +31,35 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 	bool subfileHasCredits = (toProceedBoolList[0][1] == "1");
 	bool subfileisColorTagged = (toProceedBoolList[1][1] == "1");
 	bool subfileisSDH = (toProceedBoolList[2][1] == "1");
-	
 
-	//check if subs are dirty or has color tags
+	//check if subs are dirty or have color tags
 	if (!subfileHasCredits && !subfileisColorTagged) {
 		if (subfileisSDH) {
 			std::string sCommand = "SubtitleEdit /convert \"" + subFilename + "\" SubRip /overwrite /removetextforhi > nul";
 			system(sCommand.c_str());
 			cout << "Removed SDH text from " << getBasename(subFilename) << "\n";
 			wLogfile << "Removed SDH text from " << getBasename(subFilename) << "\n";
-			return true;
+			return 1;
 		}
-		return false;
+		return 0;
 	}
 
 	//open sub file for writing
 	std::ofstream wSubfile(subFilename, std::ios::trunc);
 	if (!wSubfile.good()) {
 		std::cerr << "'" << getBasename(subFilename) << "' could not be opened for writing\n";
-		return false;
+		return 0;
 	}
 
 	cout << "Filtering '" << getBasename(subFilename) << "'\n\n";
 	wLogfile << "Filtering '" << getBasename(subFilename) << "'\n\n";
-
+	
+	// keep track of line number that is being filtered/edited
+	int lineNum = 1;
+	std::vector<std::string> subblock;
+	std::vector<std::string> subblock_old;
+	
+	// filter sub file and remove color tags
 	for (int i = 0; i < subfileContents.size() - 1; ++i) {
 		// if is sub line number
 		if (!isTimeStamp(subfileContents[i + 1])) {
@@ -115,7 +116,8 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 			++lineNum;
 		}
 	}
-
+	
+	int wLineNum = 1;
 	// write clean subs back to subtitle file
 	for (int i = 0; i < newSubfileContents.size(); ++i) {
 		wSubfile << wLineNum << "\n";
@@ -127,10 +129,10 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 	}
 	
 
-	return true;
+	return 1;
 }
 
-std::string getIniValue(const std::string & iniParam) {
+std::string getIniValue(const std::string & iniKey) {
 	std::ifstream rIniFile("config.ini");
 	if (!rIniFile.good()) {
 		cout << "'config.ini' not found. Press Enter to continue.\n";
@@ -141,8 +143,8 @@ std::string getIniValue(const std::string & iniParam) {
 	std::string sTemp;
 
 	while (std::getline(rIniFile, sTemp)) {
-		if (sTemp.find(iniParam) == 0) {
-			for (int i = iniParam.size(); i < sTemp.size(); ++i) {
+		if (sTemp.find(iniKey) == 0) {
+			for (int i = iniKey.size(); i < sTemp.size(); ++i) {
 				if (!isspace(sTemp[i]) && sTemp[i] != '=') {
 					return sTemp.substr(i, sTemp.size() - 1);
 				}
@@ -150,10 +152,7 @@ std::string getIniValue(const std::string & iniParam) {
 		}
 	}
 
-	cout << iniParam << " not found in config.ini\n"
-		<< "Exiting. Press Enter to continue.\n";
-	cin.get();
-	exit(1);
+	fatal(iniKey + " key not found in config.ini\n");
 }
 
 void isSubfileDirty(std::vector<std::vector<std::string>> & toProceedBoolList, const std::vector<std::string> & creditslist, std::vector<std::string> subfileContents) {
@@ -170,7 +169,6 @@ void isSubfileDirty(std::vector<std::vector<std::string>> & toProceedBoolList, c
 fi:
 
 	std::string sTemp;
-
 	for (int i = 0; i < subfileContents.size(); ++i) {
 		sTemp = subfileContents[i];
 		std::transform(sTemp.begin(), sTemp.end(), sTemp.begin(), ::tolower);
@@ -197,13 +195,13 @@ inline bool subblockHascredits(const std::vector <std::string> & creditslist, st
 			}
 		}
 	}
+	
 	return false;
 }
 
 std::string getEpisodeStr(const std::string & subFilename) {
 	std::smatch sm;
 	std::regex e("s[0-9][0-9]e[0-9][0-9]", std::regex_constants::icase);
-
 	std::regex_search(subFilename, sm, e);
 
 	return sm[0];
@@ -280,6 +278,7 @@ std::string getBasename(const std::string & filepath) {
 			return filepath.substr(i + 1, filepath.size() - i);
 		}
 	}
+	
 	return filepath;
 }
 
@@ -289,5 +288,13 @@ bool isFullyEmpty(const std::string & sTest) {
 			return false;
 		}
 	}
+	
 	return true;
+}
+
+void fatal(const std::string & errMsg) {
+	cout << "[FATAL] " << errMsg << "\n";
+	cout << "[FATAL] Exiting. Press Enter to continue.\n";
+	cin.get();
+	exit(1);
 }

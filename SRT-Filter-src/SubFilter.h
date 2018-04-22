@@ -12,7 +12,7 @@ using std::cin;
 using std::cout;
 
 bool filterSubfile(const std::string &subFilename, const std::vector<std::string> & creditslist, const std::string & logFilename, std::ofstream & wLogfile);
-std::string getIniValue(const std::string & iniParam);
+std::string getIniValue(const std::string & iniKey);
 void isSubfileDirty(std::vector<std::vector<std::string>> & toProceedBoolList, const std::vector<std::string> & creditslist, std::vector<std::string> subfileContents);
 inline bool subblockHascredits(const std::vector <std::string> & creditslist, std::vector<std::string> subblock);
 std::string getEpisodeStr(const std::string & subFilename);
@@ -23,5 +23,6 @@ void removeEmptySubLines(std::vector <std::string> & subblock);
 bool isTimeStamp(const std::string & sTest);
 std::string getBasename(const std::string &filepath);
 bool isFullyEmpty(const std::string & sTest);
+void fatal(const std::string & errMsg);
 
 #endif
