@@ -47,7 +47,7 @@ def beginExtraction(FILE, extractForcedSubs):
         nTrack += 1
 
     nTrack = -1
-    # In spite of previous extractions, extract english forced sub
+    # In spite of previous extractions, and if allowed by the config.ini, extract english forced sub
     for line in outputlines:
         if extractForcedSubs and not os.path.isfile(FILE.replace(EXT, '.FORCED.eng.srt')) and lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:1'):
             print('')
