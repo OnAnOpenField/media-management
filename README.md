@@ -7,7 +7,7 @@ Make sure to keep all these files together in a folder with the config.ini compo
 Set your preferred paths in the config.ini and then set a schedule to these scripts using your
 OS's built-in scheduling software, such as Task Scheduler for windows
 
-In order, these scripts will:
+These scripts will:
 
 1. Get the most recent video files for your media library
 2. Extract embedded SRT files from MKVs
