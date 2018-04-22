@@ -1,5 +1,5 @@
 # media-manager
-Variety of scripts to manage video files and their attributes. [Screen](https://i.imgur.com/gUUIGLJ.jpg)
+Variety of scripts to manage video files and their attributes. [Screen](https://i.imgur.com/JW8TndT.jpg)
 
 ## Usage
 Make sure to keep all these files together along with the config.ini component. 
