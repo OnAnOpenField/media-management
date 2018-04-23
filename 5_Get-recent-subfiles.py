@@ -9,6 +9,7 @@ def fatal(errMsg):
     time.sleep(2)
     exit()
 
+
 def main():
     if not os.path.isfile('config.ini'): fatal('Cannot find \'config.ini\'')
     # open config.ini for reading
@@ -18,7 +19,7 @@ def main():
     # get values from config file
     TVSHOWS_PATH = config['Paths']['TVShowsPath']
     MOVIES_PATH = config['Paths']['MoviesPath']
-    RECENT_SUBFILES_TXT = config['Paths']['RecentSubsPath']
+    RECENT_VIDEOFILES_PATH = config['Paths']['RecentSubsPath']
     MAX_AGE = float(config['DEFAULT']['MaxAgeForSubs'])
 
     if not os.path.isdir(TVSHOWS_PATH): fatal(TVSHOWS_PATH + ' not found. Make sure to set the config.ini')
@@ -26,7 +27,7 @@ def main():
 
     # open file for writing
     print('Getting recent sub FILENAMES\n')
-    wfile = io.open(RECENT_SUBFILES_TXT, 'w', encoding='utf_8_sig')
+    wfile = io.open(RECENT_VIDEOFILES_PATH, 'w', encoding='utf_8')
 
     # recursively walk through tv shows path and find srt FILENAMES
     currTime = time.time()
@@ -48,6 +49,7 @@ def main():
                 if ((currTime-crTime)/(60*60*24)) <= MAX_AGE:
                     print('Added ' + os.path.basename(file))
                     wfile.write(file + '\n')
+
 
 if __name__ == '__main__':
     main()

@@ -13,6 +13,7 @@ def fatal(errMsg):
     time.sleep(2)
     exit()
 
+
 def processMKV(file):
     bOutput = subprocess.check_output('mkvmerge --identify-verbose "' + file + '"', shell=True)
     output = bOutput.decode()
@@ -50,6 +51,7 @@ def processMKV(file):
         os.remove(file)
         os.rename(TEMPFILE, file)
 
+
 def main():
     if not os.path.isfile('config.ini'): fatal('Cannot find \'config.ini\'')
     config = configparser.ConfigParser()
@@ -58,7 +60,7 @@ def main():
     RECENT_VIDEOFILES_PATH = config['Paths']['RecentVideosPath']
     if not os.path.isfile(RECENT_VIDEOFILES_PATH): fatal(RECENT_VIDEOFILES_PATH + ' not found. Make sure to set the config.ini')
 
-    fileList = io.open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8_sig').read().split('\n')
+    fileList = io.open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8').read().split('\n')
     while '' in fileList: fileList.remove('')
 
     nFiles = len(fileList)

@@ -1,5 +1,7 @@
 #include "SubFilter.h"
 
+#define INI_FILEPATH "config.ini"
+
 // remove subtitle credits and strip font color tags
 bool filterSubfile(const std::string &subFilename, const std::vector<std::string> & creditslist, const std::string & logFilename, std::ofstream & wLogfile) {
 	std::vector<std::vector<std::string>> toProceedBoolList;
@@ -10,7 +12,7 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 	//open sub file for reading
 	std::ifstream rSubfile(subFilename);
 	if (!rSubfile.good()) {
-		std::cerr << "'" << getBasename(subFilename) << "' could not be opened for reading\n";
+		std::cout << "'" << subFilename << "' could not be opened for reading\n";
 		return 0;
 	}
 
@@ -37,8 +39,8 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 		if (subfileisSDH) {
 			std::string sCommand = "SubtitleEdit /convert \"" + subFilename + "\" SubRip /overwrite /removetextforhi > nul";
 			system(sCommand.c_str());
-			cout << "Removed SDH text from " << getBasename(subFilename) << "\n";
-			wLogfile << "Removed SDH text from " << getBasename(subFilename) << "\n";
+			cout << "Removed SDH text from " << subFilename << "\n";
+			wLogfile << "Removed SDH text from " << subFilename << "\n";
 			return 1;
 		}
 		return 0;
@@ -47,12 +49,12 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 	//open sub file for writing
 	std::ofstream wSubfile(subFilename, std::ios::trunc);
 	if (!wSubfile.good()) {
-		std::cerr << "'" << getBasename(subFilename) << "' could not be opened for writing\n";
+		std::cerr << "'" << subFilename << "' could not be opened for writing\n";
 		return 0;
 	}
 
-	cout << "Filtering '" << getBasename(subFilename) << "'\n\n";
-	wLogfile << "Filtering '" << getBasename(subFilename) << "'\n\n";
+	cout << "Filtering '" << subFilename << "'\n\n";
+	wLogfile << "Filtering '" << subFilename << "'\n\n";
 	
 	// keep track of line number that is being filtered/edited
 	int lineNum = 1;
@@ -133,9 +135,9 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 }
 
 std::string getIniValue(const std::string & iniKey) {
-	std::ifstream rIniFile("config.ini");
+	std::ifstream rIniFile(INI_FILEPATH);
 	if (!rIniFile.good()) {
-		cout << "'config.ini' not found. Press Enter to continue.\n";
+		cout << "\"config.ini\" not found. Press Enter to continue.\n";
 		cin.get();
 		exit(1);
 	}
@@ -152,7 +154,7 @@ std::string getIniValue(const std::string & iniKey) {
 		}
 	}
 
-	fatal(iniKey + " key not found in config.ini\n");
+	fatal(iniKey + " key not found in config.ini");
 }
 
 void isSubfileDirty(std::vector<std::vector<std::string>> & toProceedBoolList, const std::vector<std::string> & creditslist, std::vector<std::string> subfileContents) {

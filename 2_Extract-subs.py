@@ -12,15 +12,18 @@ def fatal(errMsg):
     time.sleep(2)
     exit()
 
+
 def isPathBlacklisted(FILEPATH, noSubsList):
     for str in noSubsList:
         if str in FILEPATH.lower(): return True
     return False
 
+
 def lineContains(line, *tup):
     for str in tup:
         if not str in line.lower(): return False
     return True
+
 
 def beginExtraction(file, EXTRACT_FORCEDSUBS):
     filename, ext = os.path.splitext(file)
@@ -64,6 +67,7 @@ def beginExtraction(file, EXTRACT_FORCEDSUBS):
             print('')
         nTrack += 1
 
+
 def main():
     if not os.path.isfile('config.ini'): fatal('Cannot find \'config.ini\'')
     # open config.ini for reading
@@ -80,10 +84,10 @@ def main():
 
     if HONOR_SUBSBLACKLIST:
         if not os.path.isfile(NOSUBS_LIST_PATH): fatal(NOSUBS_LIST_PATH + ' not found. Make sure to set the config.ini')
-        noSubsList = io.open(NOSUBS_LIST_PATH, 'r', encoding='utf_8_sig').read().split('\n')
+        noSubsList = io.open(NOSUBS_LIST_PATH, 'r', encoding='utf_8').read().split('\n')
         while '' in noSubsList: noSubsList.remove('')
 
-    fileList = io.open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8_sig').read().split('\n')
+    fileList = io.open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8').read().split('\n')
     while '' in fileList: fileList.remove('')
 
     nFiles = len(fileList)
@@ -96,6 +100,7 @@ def main():
             beginExtraction(file, EXTRACT_FORCEDSUBS)
         elif not HONOR_SUBSBLACKLIST:
             beginExtraction(file, EXTRACT_FORCEDSUBS)
+
 
 if __name__ == '__main__':
     main()

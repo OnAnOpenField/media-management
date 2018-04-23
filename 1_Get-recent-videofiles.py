@@ -9,6 +9,7 @@ def fatal(errMsg):
     time.sleep(2)
     exit()
 
+
 def main():
     if not os.path.isfile('config.ini'): fatal('Cannot find \'config.ini\'')
     # open config.ini for reading
@@ -18,7 +19,7 @@ def main():
     # get values from config file
     TVSHOWS_PATH = config['Paths']['TVShowsPath']
     MOVIES_PATH = config['Paths']['MoviesPath']
-    RECENT_VIDEOFILES_TXT = config['Paths']['RecentVideosPath']
+    RECENT_VIDEOFILES_PATH = config['Paths']['RecentVideosPath']
     MAX_AGE = float(config['DEFAULT']['MaxAgeForVideos'])
 
     if not os.path.isdir(TVSHOWS_PATH): fatal(TVSHOWS_PATH + ' not found. Make sure to set the config.ini')
@@ -26,7 +27,7 @@ def main():
 
     # open file for writing
     print('Getting recent video files\n')
-    wfile = io.open(RECENT_VIDEOFILES_TXT, 'w', encoding='utf_8_sig')
+    wfile = io.open(RECENT_VIDEOFILES_PATH, 'w', encoding='utf_8')
 
     # recursively walk through tv shows path and common video files
     currTime = time.time()

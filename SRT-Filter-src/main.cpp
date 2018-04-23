@@ -14,26 +14,26 @@ int main() {
 	int totalFiles = 0;
 	std::string sTemp;
 	std::string subFilename;
-	std::vector<std::string> creditslist;
+	std::vector <std::string> creditslist;
 	std::string creditslistFilename = getIniValue("SubCreditsListPath");
 	std::string sublistFilename = getIniValue("RecentSubsPath");
 	std::string logFilename = getIniValue("LogFilePath");
 
 	std::ofstream wLogfile(logFilename, std::ios::trunc);
 	if (!wLogfile.good()) {
-		fatal("File \"" + getBasename(logFilename) + "\" can't be read from.\n");
+		fatal("File \"" + logFilename + "\" could not be opened for reading.");
 	}
 
 	// open creditslist file for reading
 	std::ifstream rCreditslistFile(creditslistFilename);
 	if (!rCreditslistFile.good()) {
-		fatal("File \"" + getBasename(creditslistFilename) + "\" can't be read from.\n");
+		fatal("File \"" + creditslistFilename + "\" could not be opened for reading.");
 	}
 
 	// Open SRT file list for reading
 	std::ifstream rSublistFile(sublistFilename);
 	if (!rSublistFile.good()) {
-		fatal("File \"" + getBasename(sublistFilename) + "\" can't be read from.\n");
+		fatal("File \"" + sublistFilename + "\" could not be opened for reading.");
 	}
 
 	// read from creditslist txt
@@ -42,9 +42,10 @@ int main() {
 			creditslist.push_back(sTemp);
 		}
 	}
+	rCreditslistFile.close();
 
 	// read number of files (each line contains path to file)
-	while (std::getline(rSublistFile, subFilename)) {
+	while (std::getline(rSublistFile, sTemp)) {
 		++totalFiles;
 	}
 	rSublistFile.clear();
@@ -61,9 +62,10 @@ int main() {
 		++processedFiles;
 		cout << processedFiles << " of " << totalFiles << " files processed. \r";
 	}
+	rSublistFile.close();
 	
-	cout << filesFiltered << " of " << processedFiles << " files were filtered.\n";
-	wLogfile << filesFiltered << " of " << processedFiles << " files were filtered.";
+	cout << filesFiltered << " of " << totalFiles << " files were filtered.\n";
+	wLogfile << filesFiltered << " of " << totalFiles << " files were filtered.";
 	
 	return 0;
 }

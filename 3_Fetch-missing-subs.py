@@ -10,10 +10,12 @@ def fatal(errMsg):
     time.sleep(2)
     exit()
 
+
 def isPathBlacklisted(FILEPATH, noSubsList):
     for str in noSubsList:
         if str in FILEPATH.lower(): return True
     return False
+
 
 def fetchSubs(file):
     filename, ext = os.path.splitext(file)
@@ -22,6 +24,7 @@ def fetchSubs(file):
     if not os.path.isfile(file.replace(ext, '.eng.srt')): subprocess.call('filebot -get-subtitles "' + file + '"', shell=True)
     if not os.path.isfile(file.replace(ext, '.eng.srt')): subprocess.call('subliminal download -l en "' + file + '"', shell=True)
     if os.path.isfile(file.replace(ext, '.en.srt')): os.rename(file.replace(ext, '.en.srt'), file.replace(ext, '.eng.srt'))
+
 
 def main():
     if not os.path.isfile('config.ini'): fatal('Cannot find \'config.ini\'')
@@ -36,11 +39,11 @@ def main():
 
     if HONOR_SUBSBLACKLIST:
         if not os.path.isfile(NOSUBS_LIST_PATH): fatal(NOSUBS_LIST_PATH + ' not found. Make sure to set the config.ini')
-        noSubsList = io.open(NOSUBS_LIST_PATH, 'r', encoding='utf_8_sig').read().split('\n')
+        noSubsList = io.open(NOSUBS_LIST_PATH, 'r', encoding='utf_8').read().split('\n')
         while '' in noSubsList: noSubsList.remove('')
 
     nCount = 0
-    fileList = io.open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8_sig').read().split('\n')
+    fileList = io.open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8').read().split('\n')
     while '' in fileList: fileList.remove('')
 
     for file in fileList:
@@ -49,6 +52,7 @@ def main():
             fetchSubs(file)
         elif not HONOR_SUBSBLACKLIST:
             fetchSubs(file)
+
 
 if __name__ == '__main__':
     main()
