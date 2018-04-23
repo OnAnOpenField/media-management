@@ -13,6 +13,7 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 	std::ifstream rSubfile(subFilename);
 	if (!rSubfile.good()) {
 		std::cout << "'" << subFilename << "' could not be opened for reading\n";
+		wLogfile << "'" << subFilename << "' could not be opened for reading\n";
 		return 0;
 	}
 
