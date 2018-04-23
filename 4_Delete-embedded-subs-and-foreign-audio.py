@@ -53,7 +53,7 @@ def processMKV(file):
 
 
 def main():
-    if not os.path.isfile('config.ini'): fatal('Cannot find \'config.ini\'')
+    if not os.path.isfile('config.ini'): fatal('Cannot find "config.ini"')
     config = configparser.ConfigParser()
     config.read('config.ini')
 
