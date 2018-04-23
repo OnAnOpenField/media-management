@@ -1,7 +1,8 @@
 import io
-import os
-import time
 import configparser
+import os
+import platform
+import time
 
 def fatal(errMsg):
     print('[FATAL] ' + errMsg)
@@ -10,8 +11,13 @@ def fatal(errMsg):
     exit()
 
 
+def getCrTime(file):
+    if platform.system() == 'Darwin': return os.stat(file).st_birthtime
+    return os.path.getctime(file)
+
+
 def main():
-    if not os.path.isfile('config.ini'): fatal('Cannot find \'config.ini\'')
+    if not os.path.isfile('config.ini'): fatal('Cannot find "config.ini"')
     # open config.ini for reading
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -35,7 +41,7 @@ def main():
         for filename in FILENAMES:
             if filename.endswith('.mp4') or filename.endswith('.mkv') or filename.endswith('.avi') or filename.endswith('.m4v') or filename.endswith('.ts'):
                 file = os.path.join(ROOT, filename)
-                crTime = os.path.getctime(file)
+                crTime = getCrTime(file)
                 if ((currTime-crTime)/(60*60*24)) <= MAX_AGE:
                     print('Added ' + os.path.basename(file))
                     wfile.write(file + '\n')
@@ -45,7 +51,7 @@ def main():
         for filename in FILENAMES:
             if filename.endswith('.mp4') or filename.endswith('.mkv') or filename.endswith('.avi') or filename.endswith('.m4v') or filename.endswith('.ts'):
                 file = os.path.join(ROOT, filename)
-                crTime = os.path.getctime(file)
+                crTime = getCrTime(file)
                 if ((currTime-crTime)/(60*60*24)) <= MAX_AGE:
                     print('Added ' + os.path.basename(file))
                     wfile.write(file + '\n')
