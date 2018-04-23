@@ -15,25 +15,25 @@ int main() {
 	std::string sTemp;
 	std::string subFilename;
 	std::vector <std::string> creditslist;
-	std::string creditslistFilename = getIniValue("SubCreditsListPath");
-	std::string sublistFilename = getIniValue("RecentSubsPath");
-	std::string logFilename = getIniValue("LogFilePath");
+	std::string SUBFILTER_LOG_PATH = getIniValue("LogFilePath");
+	std::string CREDITS_LIST_PATH = getIniValue("SubCreditsListPath");
+	std::string RECENT_SUBS_PATH = getIniValue("RecentSubsPath");
 
-	std::ofstream wLogfile(logFilename, std::ios::trunc);
+	std::ofstream wLogfile(SUBFILTER_LOG_PATH, std::ios::trunc);
 	if (!wLogfile.good()) {
-		fatal("File \"" + logFilename + "\" could not be opened for reading.");
+		fatal("File \"" + SUBFILTER_LOG_PATH + "\" could not be opened for reading.");
 	}
 
 	// open creditslist file for reading
-	std::ifstream rCreditslistFile(creditslistFilename);
+	std::ifstream rCreditslistFile(CREDITS_LIST_PATH);
 	if (!rCreditslistFile.good()) {
-		fatal("File \"" + creditslistFilename + "\" could not be opened for reading.");
+		fatal("File \"" + CREDITS_LIST_PATH + "\" could not be opened for reading.");
 	}
 
 	// Open SRT file list for reading
-	std::ifstream rSublistFile(sublistFilename);
+	std::ifstream rSublistFile(RECENT_SUBS_PATH);
 	if (!rSublistFile.good()) {
-		fatal("File \"" + sublistFilename + "\" could not be opened for reading.");
+		fatal("File \"" + RECENT_SUBS_PATH + "\" could not be opened for reading.");
 	}
 
 	// read from creditslist txt
@@ -58,7 +58,7 @@ int main() {
 			creditslist.push_back(sTemp);
 		}
 		
-		filesFiltered += filterSubfile(subFilename, creditslist, logFilename, wLogfile);
+		filesFiltered += filterSubfile(subFilename, creditslist, wLogfile);
 		++processedFiles;
 		cout << processedFiles << " of " << totalFiles << " files processed. \r";
 	}

@@ -3,7 +3,7 @@
 #define INI_FILEPATH "config.ini"
 
 // remove subtitle credits and strip font color tags
-bool filterSubfile(const std::string &subFilename, const std::vector<std::string> & creditslist, const std::string & logFilename, std::ofstream & wLogfile) {
+bool filterSubfile(const std::string &subFilename, const std::vector<std::string> & creditslist, std::ofstream & wLogfile) {
 	std::vector<std::vector<std::string>> toProceedBoolList;
 	std::vector<std::string> subfileContents;
 	std::vector<std::vector<std::string>> newSubfileContents;
@@ -157,6 +157,14 @@ std::string getIniValue(const std::string & iniKey) {
 	fatal(iniKey + " key not found in config.ini");
 }
 
+std::string getEpisodeStr(const std::string & subFilename) {
+	std::smatch sm;
+	std::regex e("s[0-9][0-9]e[0-9][0-9]", std::regex_constants::icase);
+	std::regex_search(subFilename, sm, e);
+
+	return sm[0];
+}
+
 void isSubfileDirty(std::vector<std::vector<std::string>> & toProceedBoolList, const std::vector<std::string> & creditslist, std::vector<std::string> subfileContents) {
 	for (int i = 0; i<creditslist.size(); ++i) {
 		for (int k = 0; k<subfileContents.size(); ++k) {
@@ -199,14 +207,6 @@ inline bool subblockHascredits(const std::vector <std::string> & creditslist, st
 	}
 	
 	return false;
-}
-
-std::string getEpisodeStr(const std::string & subFilename) {
-	std::smatch sm;
-	std::regex e("s[0-9][0-9]e[0-9][0-9]", std::regex_constants::icase);
-	std::regex_search(subFilename, sm, e);
-
-	return sm[0];
 }
 
 bool isColorTagged(const std::vector<std::string> & subblock) {
@@ -272,16 +272,6 @@ void removeEmptySubLines(std::vector <std::string> & subblock) {
 bool isTimeStamp(const std::string & sTest) {
 	std::regex e("[0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9][0-9][0-9]");
 	return regex_search(sTest, e);
-}
-
-std::string getBasename(const std::string & filepath) {
-	for (int i = filepath.size() - 1; i >= 0; --i) {
-		if (filepath[i] == '/' || filepath[i] == '\\') {
-			return filepath.substr(i + 1, filepath.size() - i);
-		}
-	}
-	
-	return filepath;
 }
 
 bool isFullyEmpty(const std::string & sTest) {
