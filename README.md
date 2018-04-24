@@ -3,7 +3,7 @@ Variety of scripts to manage video files and their attributes.
 
 ## Install instructions
 
-Easiest way to get up and running and using these scripts is to install the Chocolatey Package Manager. From an elevated command prompt, run:
+Easiest way to get up and running and using these scripts is to install the [Chocolatey Package Manager](https://chocolatey.org/). From an elevated command prompt, run:
 
 ```
 @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
