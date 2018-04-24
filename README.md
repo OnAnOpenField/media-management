@@ -1,8 +1,31 @@
 # media-manager
 Variety of scripts to manage video files and their attributes.
 
+## Install instructions
+
+Easiest way to get up and running and using these scripts is to install the Chocolatey Package Manager. From an elevated command prompt, run:
+
+```
+@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+```
+then close the command prompt window, then open an elevated command prompt again and run these install commands:
+
+```
+choco install python
+```
+```
+choco install mkxtoolnix
+```
+```
+choco install filebot
+```
+```
+choco install subtitleedit
+```
+Install the latest .whl file for python3 from [Subliminal's](https://github.com/Diaoul/subliminal/releases) github release page
+
 ## Usage
-Make sure to keep all these files together along with the config.ini component. 
+Make sure to keep all these files together along with the config.ini component.
 
 Set your preferred paths in the config.ini and then set a run schedule to these scripts using your
 OS's built-in scheduling software to run while you sleep, such as Task Scheduler for windows.
