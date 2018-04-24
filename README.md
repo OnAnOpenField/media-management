@@ -12,8 +12,8 @@ in the [MKVToolNix](https://mkvtoolnix.download/) toolset, to analyze videos.
 
 These scripts will:
 
-1. Get the most recent video files and list them in a txt file
-2. Extract embedded SRT files from MKVs
+1. Get the most recent videos and list them in a txt file, and
+2. Extract embedded SRT subtitles from MKVs
 3. Fetch online subtitles using [Filebot](https://www.filebot.net/) and [Subliminal's](https://subliminal.readthedocs.io/en/latest/) commandline components
 4. Remove embedded subtitles from video files and any non-english audio tracks, as well as english commentary tracks
 5. Get the most recent subtitle files and list them in a txt file
