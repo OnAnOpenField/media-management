@@ -32,7 +32,7 @@ pip install filename.whl
 ```
 
 ## Usage
-Make sure to keep all these files together along with the config.ini component.
+Make sure to keep all the files provided in the Release page together along with their config.ini component.
 
 Set your preferred paths in the config.ini and then set a run schedule to these scripts using your
 OS's built-in scheduling software to run while you sleep, such as Task Scheduler for windows.
