@@ -26,24 +26,19 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 	}
 	rSubfile.close();
 
-	toProceedBoolList.push_back({ "hasCredits", "0" });
-	toProceedBoolList.push_back({ "hasColorTags", "0" });
-	toProceedBoolList.push_back({ "hasSDH", "0" });
+	toProceedBoolList = {
+		{ "hasSDH", "0" }, 
+		{ "hasColorTags", "0" }, 
+		{ "hasCredits", "0" }
+	};
+	
 	isSubfileDirty(toProceedBoolList, creditslist, subfileContents);
-
-	bool subfileHasCredits = (toProceedBoolList[0][1] == "1");
-	bool subfileisColorTagged = (toProceedBoolList[1][1] == "1");
-	bool subfileisSDH = (toProceedBoolList[2][1] == "1");
+	bool subfileHasTextForHI = (toProceedBoolList[0][1] == "1");
+	bool subfileisColorTagged = (toProceedBoolList[0][1] == "1");
+	bool subfileHasCredits = (toProceedBoolList[2][1] == "1");
 
 	//check if subs are dirty or have color tags
-	if (!subfileHasCredits && !subfileisColorTagged) {
-		if (subfileisSDH) {
-			std::string sCommand = "SubtitleEdit /convert \"" + subFilename + "\" SubRip /overwrite /removetextforhi > nul";
-			system(sCommand.c_str());
-			cout << "Removed SDH text from " << subFilename << "\n";
-			wLogfile << "Removed SDH text from " << subFilename << "\n";
-			return 1;
-		}
+	if (!subfileHasCredits && !subfileisColorTagged && !subfileHasTextForHI) {
 		return 0;
 	}
 
@@ -88,6 +83,15 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 				wLogfile << "\n";
 
 				subblock.clear();
+			}
+
+			if (subfileHasTextForHI && hasTextForHI(subblock) && !subblock.empty()) {
+				cout << "    Line " << lineNum << " text for HI removed.\n\n";
+				wLogfile << "    Line " << lineNum << " text for HI removed.\n\n";
+
+				removeTextForHI(subblock);
+				removeEmptySubLines(subblock);
+				trim(subblock);
 			}
 
 			// if sub block is color tagged
@@ -166,19 +170,14 @@ std::string getEpisodeStr(const std::string & subFilename) {
 	return sm[0];
 }
 
-void isSubfileDirty(std::vector<std::vector<std::string>> & toProceedBoolList, const std::vector<std::string> & creditslist, std::vector<std::string> subfileContents) {
-	for (int i = 0; i<creditslist.size(); ++i) {
-		for (int k = 0; k<subfileContents.size(); ++k) {
-			std::regex e(creditslist[i], std::regex_constants::icase);
-			if (regex_search(subfileContents[k], e)) {
-				toProceedBoolList[0][1] = "1";
-				goto fi;
-			}
+void isSubfileDirty(std::vector <std::vector <std::string>> & toProceedBoolList, const std::vector<std::string> & creditslist, std::vector<std::string> subfileContents) {
+	for (int i = 0; i < subfileContents.size(); ++i) {
+		if (subfileContents[i].find('[') != std::string::npos) {
+			toProceedBoolList[0][1] = "1";
+			break;
 		}
 	}
-
-fi:
-
+	
 	std::string sTemp;
 	for (int i = 0; i < subfileContents.size(); ++i) {
 		sTemp = subfileContents[i];
@@ -188,26 +187,16 @@ fi:
 			break;
 		}
 	}
-
-	for (int i = 0; i < subfileContents.size(); ++i) {
-		if (subfileContents[i].find('[') != std::string::npos) {
-			toProceedBoolList[2][1] = "1";
-			break;
-		}
-	}
-}
-
-inline bool subblockHascredits(const std::vector <std::string> & creditslist, std::vector<std::string> subblock) {
+	
 	for (int i = 0; i<creditslist.size(); ++i) {
-		for (int k = 0; k<subblock.size(); ++k) {
+		for (int k = 0; k<subfileContents.size(); ++k) {
 			std::regex e(creditslist[i], std::regex_constants::icase);
-			if (regex_search(subblock[k], e)) {
-				return true;
+			if (regex_search(subfileContents[k], e)) {
+				toProceedBoolList[2][1] = "1";
+				return;
 			}
 		}
-	}
-	
-	return false;
+	}	
 }
 
 bool isColorTagged(const std::vector<std::string> & subblock) {
@@ -216,6 +205,31 @@ bool isColorTagged(const std::vector<std::string> & subblock) {
 		sTemp = subblock[i];
 		std::transform(sTemp.begin(), sTemp.end(), sTemp.begin(), ::tolower);
 		if (sTemp.find('<') != std::string::npos && sTemp.find("font") != std::string::npos && sTemp.find('=') != std::string::npos) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void removeTextForHI(std::vector <std::string> & subblock) {
+	for (int i = 1; i<subblock.size(); ++i) {
+		while (subblock[i].find('[') != std::string::npos && subblock[i].find(']') != std::string::npos) {
+			subblock[i].erase(subblock[i].begin() + subblock[i].find('['), subblock[i].begin() + subblock[i].find(']') + 1);
+		}
+		if (subblock[i].find('[') != std::string::npos && subblock[i].find(']') == std::string::npos) {
+			subblock[i].erase(subblock[i].begin() + subblock[i].find('['), subblock[i].end());
+			for (++i; i<subblock.size() && subblock[i].find(']') == std::string::npos; ++i) {
+				subblock[i].erase(subblock[i].begin(), subblock[i].end());
+			}
+			subblock[i].erase(subblock[i].begin(), subblock[i].begin() + subblock[i].find(']') + 1);
+		}
+	}
+}
+
+bool hasTextForHI(const std::vector <std::string> subblock) {
+	for (int i = 0; i < subblock.size(); ++i) {
+		if (subblock[i].find('[') != std::string::npos) {
 			return true;
 		}
 	}
@@ -248,6 +262,19 @@ void removeFontTags(std::vector <std::string> & subblock) {
 	}
 }
 
+inline bool subblockHascredits(const std::vector <std::string> & creditslist, std::vector<std::string> subblock) {
+	for (int i = 0; i<creditslist.size(); ++i) {
+		for (int k = 0; k<subblock.size(); ++k) {
+			std::regex e(creditslist[i], std::regex_constants::icase);
+			if (regex_search(subblock[k], e)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 void fixTags(std::vector<std::string> & subblock) {
 	for (int i = 1; i < subblock.size(); ++i) {
 		for (int k = 0; k < subblock[i].size(); ++k) {
@@ -264,9 +291,13 @@ void fixTags(std::vector<std::string> & subblock) {
 
 void removeEmptySubLines(std::vector <std::string> & subblock) {
 	for (int i = 0; i < subblock.size(); ++i) {
-		if (isFullyEmpty(subblock[i])) {
+		while (i < subblock.size() && isFullyEmpty(subblock[i])) {
 			subblock.erase(subblock.begin() + i);
 		}
+	}
+
+	if (subblock.size() == 1) {
+		subblock.clear();
 	}
 }
 
@@ -275,7 +306,29 @@ bool isTimeStamp(const std::string & sTest) {
 	return regex_search(sTest, e);
 }
 
-bool isFullyEmpty(const std::string & sTest) {
+void trim(std::vector <std::string> & subblock) {
+	for (int i = 1; i<subblock.size(); ++i) {
+		int start = -1;
+		int end = -1;
+		for (int k = 0; k < subblock[i].size() && start == -1; ++k) {
+			if (!isspace(subblock[i][k])) {
+				start = k;
+			}
+		}
+
+		for (int k = subblock[i].size() - 1; k >= 0 && end == -1; --k) {
+			if (!isspace(subblock[i][k])) {
+				end = k;
+			}
+		}
+
+		if (start != -1 && end != -1) {
+			subblock[i] = subblock[i].substr(start, end - start + 1);
+		}
+	}
+}
+
+inline bool isFullyEmpty(const std::string & sTest) {
 	for (int i = 0; i < sTest.size(); ++i) {
 		if (!isspace(sTest[i])) {
 			return false;
