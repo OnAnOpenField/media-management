@@ -2,7 +2,7 @@
 Variety of scripts to manage video files and their attributes.
 
 These scripts utilize the [mkvmerge](https://mkvtoolnix.download/doc/mkvmerge.html) commandline utility, included 
-in the [MKVToolNix](https://mkvtoolnix.download/) toolset, to analyze videos, as well as [Filebot](https://www.filebot.net/) and [Subliminal's](https://subliminal.readthedocs.io/en/latest/) commandline components.
+in the [MKVToolNix](https://mkvtoolnix.download/) toolset, to analyze videos, as well as [Subliminal's](https://subliminal.readthedocs.io/en/latest/) commandline component.
 
 ## Install instructions
 
@@ -18,9 +18,6 @@ choco install python
 ```
 ```
 choco install mkxtoolnix
-```
-```
-choco install filebot
 ```
 ```
 choco install subtitleedit

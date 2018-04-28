@@ -46,6 +46,7 @@ def main():
                     print('Added ' + os.path.basename(file))
                     wfile.write(file + '\n')
 
+
     # recursively walk through movies path and find common video files
     for ROOT, DIRS, FILENAMES in os.walk(MOVIES_PATH):
         for filename in FILENAMES:
