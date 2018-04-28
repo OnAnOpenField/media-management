@@ -5,25 +5,7 @@ These scripts utilize the [mkvmerge](https://mkvtoolnix.download/doc/mkvmerge.ht
 in the [MKVToolNix](https://mkvtoolnix.download/) toolset, to analyze videos, as well as [Subliminal's](https://subliminal.readthedocs.io/en/latest/) commandline component.
 
 ## Install instructions
-
-Easiest way to get up and running and using these scripts is to install the [Chocolatey Package Manager](https://chocolatey.org/). 
-
-From an elevated command prompt, run:
-
-```
-@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-```
-```
-choco install python
-```
-```
-choco install mkxtoolnix
-```
-
-Install the latest .whl file for python3 from [Subliminal's](https://github.com/Diaoul/subliminal/releases) github release page using the command:
-```
-pip install <filename>.whl
-```
+Download from the release page and run the two batch files in order.
 
 ## Usage
 Make sure to keep all the scripts in the same folder together along with their config.ini component.
