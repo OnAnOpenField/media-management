@@ -20,8 +20,7 @@ choco install python
 choco install mkxtoolnix
 ```
 
-Install the latest .whl file for python3 from [Subliminal's](https://github.com/Diaoul/subliminal/releases) github release page
-using the command
+Install the latest .whl file for python3 from [Subliminal's](https://github.com/Diaoul/subliminal/releases) github release page using the command:
 ```
 pip install <filename>.whl
 ```
