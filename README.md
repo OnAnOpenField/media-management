@@ -6,17 +6,13 @@ in the [MKVToolNix](https://mkvtoolnix.download/) toolset, to analyze videos, as
 
 ## Install instructions
 
-Easiest way to get up and running and using these scripts is to install the [Chocolatey Package Manager](https://chocolatey.org/). From an elevated command prompt, run:
+Easiest way to get up and running and using these scripts is to install the [Chocolatey Package Manager](https://chocolatey.org/). 
+
+From an elevated command prompt, run:
 
 ```
 @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-```
-then close the command prompt window, then open an elevated command prompt again and run these install commands:
-
-```
 choco install python
-```
-```
 choco install mkxtoolnix
 ```
 Install the latest .whl file for python3 from [Subliminal's](https://github.com/Diaoul/subliminal/releases) github release page
