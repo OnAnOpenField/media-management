@@ -54,7 +54,7 @@ def beginExtraction(file, EXTRACT_FORCEDSUBS):
     for line in outputlines:
         if EXTRACT_FORCEDSUBS and not os.path.isfile(file.replace(ext, '.FORCED.eng.srt')) and lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:1'):
             print('')
-            subprocess.call('mkvextract tracks "' + file + '" ' + str(nTrack) + ':"' + file.replace(ext, 'FORCED.eng.srt' + '"'), shell=True)
+            subprocess.call('mkvextract tracks "' + file + '" ' + str(nTrack) + ':"' + file.replace(ext, '.FORCED.eng.srt' + '"'), shell=True)
             print('')
         nTrack += 1
 
