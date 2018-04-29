@@ -5,7 +5,7 @@ These scripts utilize the [mkvmerge](https://mkvtoolnix.download/doc/mkvmerge.ht
 in the [MKVToolNix](https://mkvtoolnix.download/) toolset, to analyze videos, as well as [Subliminal's](https://subliminal.readthedocs.io/en/latest/) commandline component to download subtitles.
 
 ## Install instructions
-Download from the release page and run the two batch files in order.
+Download from the release page and run the setup batch file as administrator.
 
 ## Usage
 Make sure to keep all the scripts in the same folder together along with their config.ini component.
