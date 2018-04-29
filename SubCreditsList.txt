@@ -20,13 +20,13 @@ https?://
 sync ?&? corrections?
 [ ]by ?:
 re-sync
-correct(ions|ed) by
+correct(ions|ed) by ?:?
 improved by ?:
 ripped by ?:
 synchronized by
-encod(ed|ing) ?(done)? by
-subtitles? by
-resync?(ced)? by
+encod(ed|ing) ?(done)? by ?:?
+subtitles? by ?:?
+resync?(ced)? by ?:?
 web-?dl
 web-?rip
 piratebay
