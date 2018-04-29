@@ -59,7 +59,7 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 	
 	// filter sub file and remove color tags
 	for (int i = 0; i < subfileContents.size() - 1; ++i) {
-		// if is not sub line number, ie. not start of sub block
+		// if is not sub line number, ie. contains text or timestamp
 		if (!isTimeStamp(subfileContents[i + 1])) {
 			subblock.push_back(subfileContents[i]);
 		}
