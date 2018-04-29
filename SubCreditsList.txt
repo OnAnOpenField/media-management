@@ -1,0 +1,47 @@
+www\.[[:w:]]+
+[[:w:]]+\.com
+[[:w:]]+\.net
+[[:w:]]+\.org
+[[:w:]]+\.tk
+[[:w:]]+\.io
+[[:w:]]+\.info
+[[:w:]]+\.ru
+[[:w:]]+\.uk
+[[:w:]]+\.ca
+[[:w:]]+\.de
+[[:w:]]+\.au
+[[:w:]]+\.fr
+[[:w:]]+\.es
+rarbg
+%url%
+opensubtitles
+addic7ed
+https://
+http://
+sync & corrections
+sync & correction
+sync corrections
+sync correction
+[ ]by:
+[ ]by :
+re-sync
+corrections by
+corrected by
+improved by
+ripped by
+synced by
+syncced by
+synchronized by
+encoded by
+encoding by
+encoding done by
+subtitle by
+subtitles by
+resync by
+resyncced by
+web-dl
+webdl
+webrip
+web-rip
+piratebay
+torrent downloaded
