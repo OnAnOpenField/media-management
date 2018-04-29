@@ -16,32 +16,19 @@ rarbg
 %url%
 opensubtitles
 addic7ed
-https://
-http://
-sync & corrections
-sync & correction
-sync corrections
-sync correction
-[ ]by:
-[ ]by :
+https?://
+sync ?&? corrections?
+[ ]by ?:
 re-sync
-corrections by
-corrected by
-improved by
-ripped by
-synced by
-syncced by
+correct(ions|ed) by
+improved by ?:
+ripped by ?:
+syncc?ed by
 synchronized by
-encoded by
-encoding by
-encoding done by
-subtitle by
-subtitles by
-resync by
-resyncced by
-web-dl
-webdl
-webrip
-web-rip
+encod(ed|ing) ?(done)? by
+subtitles? by
+resync(ced)? by
+web-?dl
+web-?rip
 piratebay
 torrent downloaded
