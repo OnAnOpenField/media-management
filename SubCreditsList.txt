@@ -23,11 +23,10 @@ re-sync
 correct(ions|ed) by
 improved by ?:
 ripped by ?:
-syncc?ed by
 synchronized by
 encod(ed|ing) ?(done)? by
 subtitles? by
-resync(ced)? by
+resync?(ced)? by
 web-?dl
 web-?rip
 piratebay
