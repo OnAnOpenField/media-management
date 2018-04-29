@@ -1,9 +1,9 @@
+import configparser
 import io
 import re
-import subprocess
 import os
+import subprocess
 import time
-import configparser
 
 sysEOL = '\n' if os.name == 'posix' else '\r\n'
 
@@ -15,7 +15,7 @@ def fatal(errMsg):
 
 
 def processMKV(file):
-    bOutput = subprocess.check_output('mkvmerge --identify-verbose "' + file + '"', shell=True)
+    bOutput = subprocess.check_output('mkvmerge --identify-verbose "{file}"'.format(file = file), shell=True)
     output = bOutput.decode()
     outputlines = output.split(sysEOL)
 
@@ -47,7 +47,7 @@ def processMKV(file):
     if param:
         TEMPFILE = file.replace('.mkv', '.TEMP.mkv')
         print('\nDeleting embedded subs and/or unwnated audio from ' + os.path.basename(file) + '\n')
-        subprocess.call('mkvmerge -o "' + TEMPFILE + '" ' + param + ' "' + file + '"', shell=True)
+        subprocess.call('mkvmerge -o "{outputFile}" {param} "{inputFile}"'.format(outputFile = TEMPFILE, param = param, inputFile = file), shell=True)
         os.remove(file)
         os.rename(TEMPFILE, file)
 

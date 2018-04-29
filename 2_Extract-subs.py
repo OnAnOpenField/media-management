@@ -1,8 +1,8 @@
-import io
-import subprocess
-import os
-import time
 import configparser
+import io
+import os
+import subprocess
+import time
 
 sysEOL = '\n' if os.name == 'posix' else '\r\n'
 
@@ -27,7 +27,7 @@ def lineContains(line, *tup):
 
 def beginExtraction(file, EXTRACT_FORCEDSUBS):
     filename, ext = os.path.splitext(file)
-    bOutput = subprocess.check_output('mkvmerge --identify-verbose "' + file + '"', shell=True)
+    bOutput = subprocess.check_output('mkvmerge --identify-verbose "{file}"'.format(file = file), shell=True)
     output = bOutput.decode()
     outputlines = output.split(sysEOL)
 
@@ -36,7 +36,7 @@ def beginExtraction(file, EXTRACT_FORCEDSUBS):
     for line in outputlines:
         if not os.path.isfile(file.replace(ext, '.eng.srt')) and lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:0') and not 'track_name:sdh' in line.lower():
             print('')
-            subprocess.call('mkvextract tracks "' + file + '" ' + str(nTrack) + ':"' + file.replace(ext, '.eng.srt' + '"'), shell=True)
+            subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.eng.srt')), shell=True)
             print('')
         nTrack += 1
 
@@ -45,7 +45,7 @@ def beginExtraction(file, EXTRACT_FORCEDSUBS):
     for line in outputlines:
         if not os.path.isfile(file.replace(ext, '.eng.srt')) and lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:0', 'track_name:sdh'):
             print('')
-            subprocess.call('mkvextract tracks "' + file + '" ' + str(nTrack) + ':"' + file.replace(ext, '.eng.srt' + '"'), shell=True)
+            subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.eng.srt')), shell=True)
             print('')
         nTrack += 1
 
@@ -54,7 +54,7 @@ def beginExtraction(file, EXTRACT_FORCEDSUBS):
     for line in outputlines:
         if EXTRACT_FORCEDSUBS and not os.path.isfile(file.replace(ext, '.FORCED.eng.srt')) and lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:1'):
             print('')
-            subprocess.call('mkvextract tracks "' + file + '" ' + str(nTrack) + ':"' + file.replace(ext, '.FORCED.eng.srt' + '"'), shell=True)
+            subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.FORCED.eng.srt')), shell=True)
             print('')
         nTrack += 1
 
@@ -63,7 +63,7 @@ def beginExtraction(file, EXTRACT_FORCEDSUBS):
     for line in outputlines:
         if not os.path.isfile(file.replace(ext, '.eng.srt')) and lineContains(line, 'language:und', 'subrip/srt', 'forced_track:0'):
             print('')
-            subprocess.call('mkvextract tracks "' + file + '" ' + str(nTrack) + ':"' + file.replace(ext, '.UND.eng.srt' + '"'), shell=True)
+            subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.UND.eng.srt')), shell=True)
             print('')
         nTrack += 1
 
