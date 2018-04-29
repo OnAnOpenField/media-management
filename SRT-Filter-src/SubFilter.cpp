@@ -59,7 +59,7 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 	
 	// filter sub file and remove color tags
 	for (int i = 0; i < subfileContents.size() - 1; ++i) {
-		// if is sub line number
+		// if is not sub line number, ie. not start of sub block
 		if (!isTimeStamp(subfileContents[i + 1])) {
 			subblock.push_back(subfileContents[i]);
 		}
@@ -71,7 +71,7 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 			}
 
 			// if sub block contains credits
-			if (subfileHasCredits && subblockHascredits(creditslist, subblock)) {
+			if (subfileHasCredits && hasCredits(creditslist, subblock)) {
 				cout << "    Line " << lineNum << " filtered:\n";
 				wLogfile << "    Line " << lineNum << " filtered:\n";
 
@@ -162,6 +162,7 @@ std::string getIniValue(const std::string & iniKey) {
 	fatal(iniKey + " key not found in config.ini");
 }
 
+// get Season and Episode string from title. Some subtitles add the title to the subtitles and are usually followed by advertisements.
 std::string getEpisodeStr(const std::string & subFilename) {
 	std::smatch sm;
 	std::regex e("s[0-9][0-9]e[0-9][0-9]", std::regex_constants::icase);
@@ -170,6 +171,7 @@ std::string getEpisodeStr(const std::string & subFilename) {
 	return sm[0];
 }
 
+// test if subtitles need filtering
 void isSubfileDirty(std::vector <std::vector <std::string>> & toProceedBoolList, const std::vector<std::string> & creditslist, std::vector<std::string> subfileContents) {
 	for (int i = 0; i < subfileContents.size(); ++i) {
 		if (subfileContents[i].find('[') != std::string::npos) {
@@ -199,12 +201,9 @@ void isSubfileDirty(std::vector <std::vector <std::string>> & toProceedBoolList,
 	}	
 }
 
-bool isColorTagged(const std::vector<std::string> & subblock) {
-	std::string sTemp;
+bool hasTextForHI(const std::vector <std::string> subblock) {
 	for (int i = 0; i < subblock.size(); ++i) {
-		sTemp = subblock[i];
-		std::transform(sTemp.begin(), sTemp.end(), sTemp.begin(), ::tolower);
-		if (sTemp.find('<') != std::string::npos && sTemp.find("font") != std::string::npos && sTemp.find('=') != std::string::npos) {
+		if (subblock[i].find('[') != std::string::npos) {
 			return true;
 		}
 	}
@@ -227,9 +226,12 @@ void removeTextForHI(std::vector <std::string> & subblock) {
 	}
 }
 
-bool hasTextForHI(const std::vector <std::string> subblock) {
+bool isColorTagged(const std::vector<std::string> & subblock) {
+	std::string sTemp;
 	for (int i = 0; i < subblock.size(); ++i) {
-		if (subblock[i].find('[') != std::string::npos) {
+		sTemp = subblock[i];
+		std::transform(sTemp.begin(), sTemp.end(), sTemp.begin(), ::tolower);
+		if (sTemp.find('<') != std::string::npos && sTemp.find("font") != std::string::npos && sTemp.find('=') != std::string::npos) {
 			return true;
 		}
 	}
@@ -262,19 +264,7 @@ void removeFontTags(std::vector <std::string> & subblock) {
 	}
 }
 
-inline bool subblockHascredits(const std::vector <std::string> & creditslist, std::vector<std::string> subblock) {
-	for (int i = 0; i<creditslist.size(); ++i) {
-		for (int k = 0; k<subblock.size(); ++k) {
-			std::regex e(creditslist[i], std::regex_constants::icase);
-			if (regex_search(subblock[k], e)) {
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
+// remove extraneous whitespace from tags.
 void fixTags(std::vector<std::string> & subblock) {
 	for (int i = 1; i < subblock.size(); ++i) {
 		for (int k = 0; k < subblock[i].size(); ++k) {
@@ -289,6 +279,19 @@ void fixTags(std::vector<std::string> & subblock) {
 	}
 }
 
+inline bool hasCredits(const std::vector <std::string> & creditslist, std::vector<std::string> subblock) {
+	for (int i = 0; i<creditslist.size(); ++i) {
+		for (int k = 0; k<subblock.size(); ++k) {
+			std::regex e(creditslist[i], std::regex_constants::icase);
+			if (regex_search(subblock[k], e)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 void removeEmptySubLines(std::vector <std::string> & subblock) {
 	for (int i = 0; i < subblock.size(); ++i) {
 		while (i < subblock.size() && isFullyEmpty(subblock[i])) {
@@ -301,7 +304,7 @@ void removeEmptySubLines(std::vector <std::string> & subblock) {
 	}
 }
 
-bool isTimeStamp(const std::string & sTest) {
+inline bool isTimeStamp(const std::string & sTest) {
 	std::regex e("[0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9][0-9][0-9]");
 	return regex_search(sTest, e);
 }

@@ -15,14 +15,14 @@ bool filterSubfile(const std::string &subFilename, const std::vector <std::strin
 std::string getIniValue(const std::string & iniKey);
 std::string getEpisodeStr(const std::string & subFilename);
 void isSubfileDirty(std::vector <std::vector <std::string>> & toProceedBoolList, const std::vector <std::string> & creditslist, std::vector <std::string> subfileContents);
-void removeTextForHI(std::vector <std::string> & subblock);
 bool hasTextForHI(const std::vector <std::string> subblock);
+void removeTextForHI(std::vector <std::string> & subblock);
 bool isColorTagged(const std::vector <std::string> & subblock);
 void removeFontTags(std::vector <std::string> & subblock);
-inline bool subblockHascredits(const std::vector <std::string> & creditslist, std::vector <std::string> subblock);
 void fixTags(std::vector <std::string> & subblock);
+inline bool hasCredits(const std::vector <std::string> & creditslist, std::vector <std::string> subblock);
 void removeEmptySubLines(std::vector <std::string> & subblock);
-bool isTimeStamp(const std::string & sTest);
+inline bool isTimeStamp(const std::string & sTest);
 void trim(std::vector <std::string> & subblock);
 inline bool isFullyEmpty(const std::string & sTest);
 void fatal(const std::string & errMsg);
