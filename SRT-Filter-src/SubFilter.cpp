@@ -22,12 +22,14 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 		if (isFullyEmpty(sTemp)) {
 			continue;
 		}
+		cout << sTemp << "\n";
 		subfileContents.push_back(sTemp);
 	}
 	rSubfile.close();
+	cin.get();
 
 	toProceedBoolList = {
-		{ "hasSDH", "0" }, 
+		{ "hasHIText", "0" }, 
 		{ "hasColorTags", "0" }, 
 		{ "hasCredits", "0" }
 	};
@@ -173,32 +175,38 @@ std::string getEpisodeStr(const std::string & subFilename) {
 
 // test if subtitles need filtering
 void isSubfileDirty(std::vector <std::vector <std::string>> & toProceedBoolList, const std::vector<std::string> & creditslist, std::vector<std::string> subfileContents) {
+	std::string subs;
+	std::regex e;
 	for (int i = 0; i < subfileContents.size(); ++i) {
-		if (subfileContents[i].find('[') != std::string::npos) {
+		if (isTimeStamp(subfileContents[i])) {
+			subs.clear();
+			continue;
+		}
+		subs += subfileContents[i] + ' ';
+		// check for HI/SDH text
+		if (toProceedBoolList[0][1] == "0" && subs.find('[') != std::string::npos) {
 			toProceedBoolList[0][1] = "1";
-			break;
 		}
-	}
-	
-	std::string sTemp;
-	for (int i = 0; i < subfileContents.size(); ++i) {
-		sTemp = subfileContents[i];
-		std::transform(sTemp.begin(), sTemp.end(), sTemp.begin(), ::tolower);
-		if (sTemp.find('<') != std::string::npos && sTemp.find("font") != std::string::npos && sTemp.find('=') != std::string::npos) {
-			toProceedBoolList[1][1] = "1";
-			break;
-		}
-	}
-	
-	for (int i = 0; i<creditslist.size(); ++i) {
-		for (int k = 0; k<subfileContents.size(); ++k) {
-			std::regex e(creditslist[i], std::regex_constants::icase);
-			if (regex_search(subfileContents[k], e)) {
-				toProceedBoolList[2][1] = "1";
-				return;
+		// check for font tags
+		if (toProceedBoolList[1][1] == "0") {
+			e.assign("< *font.+>", std::regex_constants::icase);
+			if (regex_search(subs, e)) {
+				toProceedBoolList[1][1] = "1";
 			}
 		}
-	}	
+		// check for credits
+		for (int k = 0; toProceedBoolList[2][1] == "0" && k < creditslist.size(); ++k) {
+			e.assign(creditslist[k], std::regex_constants::icase);
+			if (regex_search(subs, e)) {
+				toProceedBoolList[2][1] = "1";
+				break;
+			}
+		}
+
+		if (toProceedBoolList[0][1] == "1" && toProceedBoolList[1][1] == "1" && toProceedBoolList[2][1] == "1") {
+			return;
+		}
+	}
 }
 
 bool hasTextForHI(const std::vector <std::string> subblock) {
@@ -212,16 +220,26 @@ bool hasTextForHI(const std::vector <std::string> subblock) {
 }
 
 void removeTextForHI(std::vector <std::string> & subblock) {
-	for (int i = 1; i<subblock.size(); ++i) {
+	int end = -1;
+	for (int i = 1; i < subblock.size(); ++i) {
+		end = -1;
 		while (subblock[i].find('[') != std::string::npos && subblock[i].find(']') != std::string::npos) {
 			subblock[i].erase(subblock[i].begin() + subblock[i].find('['), subblock[i].begin() + subblock[i].find(']') + 1);
 		}
 		if (subblock[i].find('[') != std::string::npos && subblock[i].find(']') == std::string::npos) {
 			subblock[i].erase(subblock[i].begin() + subblock[i].find('['), subblock[i].end());
-			for (++i; i<subblock.size() && subblock[i].find(']') == std::string::npos; ++i) {
-				subblock[i].erase(subblock[i].begin(), subblock[i].end());
+			for (int k = i + 1; k < subblock.size(); ++k) {
+				if (subblock[k].find(']') != std::string::npos) {
+					end = k;
+					break;
+				}
 			}
-			subblock[i].erase(subblock[i].begin(), subblock[i].begin() + subblock[i].find(']') + 1);
+			for (int k = i + 1; end != -1 && subblock[k].find(']') == std::string::npos && k < subblock.size(); ++k) {
+				subblock[k].erase(subblock[k].begin(), subblock[k].end());
+			}
+			if (end != -1) {
+				subblock[end].erase(subblock[end].begin(), subblock[end].begin() + subblock[end].find(']') + 1);
+			}
 		}
 	}
 }
@@ -279,13 +297,16 @@ void fixTags(std::vector<std::string> & subblock) {
 	}
 }
 
-inline bool hasCredits(const std::vector <std::string> & creditslist, std::vector<std::string> subblock) {
-	for (int i = 0; i<creditslist.size(); ++i) {
-		for (int k = 0; k<subblock.size(); ++k) {
-			std::regex e(creditslist[i], std::regex_constants::icase);
-			if (regex_search(subblock[k], e)) {
-				return true;
-			}
+inline bool hasCredits(const std::vector <std::string> & creditslist, const std::vector<std::string> subblock) {
+	std::string subs;
+	for (int i = 1; i < subblock.size(); ++i) {
+		subs += subblock[i] + ' ';
+	}
+
+	for (int i = 0; i < creditslist.size(); ++i) {
+		std::regex e(creditslist[i], std::regex_constants::icase);
+		if (regex_search(subs, e)) {
+			return true;
 		}
 	}
 
@@ -305,7 +326,7 @@ void removeEmptySubLines(std::vector <std::string> & subblock) {
 }
 
 inline bool isTimeStamp(const std::string & sTest) {
-	std::regex e("[0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9][0-9][0-9]");
+	std::regex e("[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2},[0-9]{1,3} *(-)+> *[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2},[0-9]{1,3}");
 	return regex_search(sTest, e);
 }
 

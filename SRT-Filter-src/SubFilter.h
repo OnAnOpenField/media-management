@@ -20,7 +20,7 @@ void removeTextForHI(std::vector <std::string> & subblock);
 bool isColorTagged(const std::vector <std::string> & subblock);
 void removeFontTags(std::vector <std::string> & subblock);
 void fixTags(std::vector <std::string> & subblock);
-inline bool hasCredits(const std::vector <std::string> & creditslist, std::vector <std::string> subblock);
+inline bool hasCredits(const std::vector <std::string> & creditslist, const std::vector <std::string> subblock);
 void removeEmptySubLines(std::vector <std::string> & subblock);
 inline bool isTimeStamp(const std::string & sTest);
 void trim(std::vector <std::string> & subblock);
