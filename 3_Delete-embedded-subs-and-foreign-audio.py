@@ -70,6 +70,9 @@ def main():
         nCount += 1
         if file.endswith('.mkv'):
             print('Analyzing file ', nCount, ' of ', nFiles, ': ', os.path.basename(file))
+            if not os.path.isfile(file):
+                print(file + ' does not exist.')
+                continue
             processMKV(file)
 
 
