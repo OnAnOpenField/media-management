@@ -20,5 +20,4 @@ These scripts will:
 3. Remove embedded subtitles from video files and any non-english audio tracks, as well as english commentary tracks
 4. Automatically fetch missing subtitles online from OpenSubtitles, addic7ed and other subtitle sources
 5. Get the most recent subtitle files and list them in a txt file
-6. Remove ads from SRT subtitles based on commonly used expressions included in SubCreditsList.txt, remove color coded text, as well as
-remove HI/SDH lines using the windows tool [Subtitle Edit's](http://www.nikse.dk/subtitleedit/) commandline component
+6. Remove ads from SRT subtitles based on commonly used expressions included in SubCreditsList.txt, strip color coding from text, and remove HI/SDH lines
