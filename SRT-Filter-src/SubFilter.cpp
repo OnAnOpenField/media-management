@@ -223,9 +223,10 @@ void isSubfileDirty(std::vector <std::vector <std::string>> & toProceedBoolList,
 		}
 	}
 
+	std::regex e;
 	for (int i = 0; i<creditslist.size(); ++i) {
 		for (int k = 0; k<subfileContents.size(); ++k) {
-			std::regex e(creditslist[i], std::regex_constants::icase);
+			e.assign(creditslist[i], std::regex_constants::icase);
 			if (regex_search(subfileContents[k], e)) {
 				toProceedBoolList[2][1] = "1";
 				return;
