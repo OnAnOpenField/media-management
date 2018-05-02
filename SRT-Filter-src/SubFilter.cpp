@@ -22,11 +22,9 @@ bool filterSubfile(const std::string &subFilename, const std::vector<std::string
 		if (isFullyEmpty(sTemp)) {
 			continue;
 		}
-		cout << sTemp << "\n";
 		subfileContents.push_back(sTemp);
 	}
 	rSubfile.close();
-	cin.get();
 
 	toProceedBoolList = {
 		{ "hasHIText", "0" }, 
@@ -175,36 +173,63 @@ std::string getEpisodeStr(const std::string & subFilename) {
 
 // test if subtitles need filtering
 void isSubfileDirty(std::vector <std::vector <std::string>> & toProceedBoolList, const std::vector<std::string> & creditslist, std::vector<std::string> subfileContents) {
-	std::string subs;
-	std::regex e;
-	for (int i = 0; i < subfileContents.size(); ++i) {
-		if (isTimeStamp(subfileContents[i])) {
-			subs.clear();
-			continue;
-		}
-		subs += subfileContents[i] + ' ';
-		// check for HI/SDH text
-		if (toProceedBoolList[0][1] == "0" && subs.find('[') != std::string::npos) {
-			toProceedBoolList[0][1] = "1";
-		}
-		// check for font tags
-		if (toProceedBoolList[1][1] == "0") {
-			e.assign("< *font.+>", std::regex_constants::icase);
-			if (regex_search(subs, e)) {
-				toProceedBoolList[1][1] = "1";
-			}
-		}
-		// check for credits
-		for (int k = 0; toProceedBoolList[2][1] == "0" && k < creditslist.size(); ++k) {
-			e.assign(creditslist[k], std::regex_constants::icase);
-			if (regex_search(subs, e)) {
-				toProceedBoolList[2][1] = "1";
-				break;
-			}
-		}
+	//std::string subs;
+	//std::regex e;
+	//for (int i = 0; i < subfileContents.size(); ++i) {
+	//	if (isTimeStamp(subfileContents[i])) {
+	//		subs.clear();
+	//		continue;
+	//	}
+	//	subs += subfileContents[i] + ' ';
+	//	// check for HI/SDH text
+	//	if (toProceedBoolList[0][1] == "0" && subs.find('[') != std::string::npos) {
+	//		toProceedBoolList[0][1] = "1";
+	//	}
+	//	// check for font tags
+	//	if (toProceedBoolList[1][1] == "0") {
+	//		e.assign("< *font.+>", std::regex_constants::icase);
+	//		if (regex_search(subs, e)) {
+	//			toProceedBoolList[1][1] = "1";
+	//		}
+	//	}
+	//	// check for credits
+	//	for (int k = 0; toProceedBoolList[2][1] == "0" && k < creditslist.size(); ++k) {
+	//		e.assign(creditslist[k], std::regex_constants::icase);
+	//		if (regex_search(subs, e)) {
+	//			toProceedBoolList[2][1] = "1";
+	//			break;
+	//		}
+	//	}
 
-		if (toProceedBoolList[0][1] == "1" && toProceedBoolList[1][1] == "1" && toProceedBoolList[2][1] == "1") {
-			return;
+	//	if (toProceedBoolList[0][1] == "1" && toProceedBoolList[1][1] == "1" && toProceedBoolList[2][1] == "1") {
+	//		return;
+	//	}
+	//}
+
+	for (int i = 0; i < subfileContents.size(); ++i) {
+		if (subfileContents[i].find('[') != std::string::npos) {
+			toProceedBoolList[0][1] = "1";
+			break;
+		}
+	}
+
+	std::string sTemp;
+	for (int i = 0; i < subfileContents.size(); ++i) {
+		sTemp = subfileContents[i];
+		std::transform(sTemp.begin(), sTemp.end(), sTemp.begin(), ::tolower);
+		if (sTemp.find('<') != std::string::npos && sTemp.find("font") != std::string::npos && sTemp.find('=') != std::string::npos) {
+			toProceedBoolList[1][1] = "1";
+			break;
+		}
+	}
+
+	for (int i = 0; i<creditslist.size(); ++i) {
+		for (int k = 0; k<subfileContents.size(); ++k) {
+			std::regex e(creditslist[i], std::regex_constants::icase);
+			if (regex_search(subfileContents[k], e)) {
+				toProceedBoolList[2][1] = "1";
+				return;
+			}
 		}
 	}
 }
