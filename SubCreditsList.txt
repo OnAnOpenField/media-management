@@ -17,17 +17,19 @@ rarbg
 opensubtitles
 addic7ed
 https?://
-sync ?&? corrections?
-[ ]by ?:
+sync *&? *corrections?
+[ ]+by *:
 re-sync
-correct(ions|ed) by ?:?
-improved by ?:
-ripped by ?:
+sync.+correct(ed|ions?)|correct.+sync(c?ed)?
+< *(font).+(sync|subtitle|correct)
+correct(ions|ed) +by *:?
+improved +by *:
+ripped +by *:
 synchronized by
-encod(ed|ing) ?(done)? by ?:?
-subtitles? by ?:?
-resync?(ced)? by ?:?
+encod(ed|ing) *(done)? by *:?
+subtitles? +by *:?
+re-?sync?(ced)? +by *:?
 web-?dl
 web-?rip
-piratebay
+pirate(-| +)?bay
 torrent downloaded
