@@ -17,11 +17,9 @@ rarbg
 opensubtitles
 addic7ed
 https?://
-sync *&? *corrections?
 [ ]+by *:
 re-sync
 sync.+correct(ed|ions?)|correct.+sync(c?ed)?
-< *(font).+(sync|subtitle|correct)
 correct(ions|ed) +by *:?
 improved +by *:
 ripped +by *:
