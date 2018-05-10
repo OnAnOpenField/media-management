@@ -39,6 +39,7 @@ def beginExtraction(file, EXTRACT_FORCEDSUBS):
                 print('')
                 subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.eng.srt')), shell=True)
                 print('')
+                break
             nTrack += 1
 
     nTrack = -1
@@ -49,6 +50,7 @@ def beginExtraction(file, EXTRACT_FORCEDSUBS):
                 print('')
                 subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.eng.srt')), shell=True)
                 print('')
+                break
             nTrack += 1
 
     nTrack = -1
@@ -59,6 +61,7 @@ def beginExtraction(file, EXTRACT_FORCEDSUBS):
                 print('')
                 subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.FORCED.eng.srt')), shell=True)
                 print('')
+                break
             nTrack += 1
 
     nTrack = -1
@@ -69,6 +72,7 @@ def beginExtraction(file, EXTRACT_FORCEDSUBS):
                 print('')
                 subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.UND.srt')), shell=True)
                 print('')
+                break
             nTrack += 1
 
 
