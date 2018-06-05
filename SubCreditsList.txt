@@ -1,18 +1,19 @@
-www\.[[:w:]]+
-[[:w:]]+\.com
-[[:w:]]+\.net
-[[:w:]]+\.org
-[[:w:]]+\.tk
-[[:w:]]+\.io
-[[:w:]]+\.info
-[[:w:]]+\.ru
-[[:w:]]+\.uk
-[[:w:]]+\.ca
-[[:w:]]+\.de
-[[:w:]]+\.au
-[[:w:]]+\.fr
-[[:w:]]+\.es
+www\.\w+
+\w+\.com
+\w+\.net
+\w+\.org
+\w+\.tk
+\w+\.io
+\w+\.info
+\w+\.ru
+\w+\.uk
+\w+\.ca
+\w+\.de
+\w+\.au
+\w+\.fr
+\w+\.es
 rarbg
+thetvdb
 %url%
 opensubtitles
 addic7ed
@@ -31,3 +32,4 @@ web-?dl
 web-?rip
 pirate(-| +)?bay
 torrent downloaded
+season.*\d.*episode.*\d
