@@ -1,5 +1,6 @@
+#!/usr/bin/python3
+
 import configparser
-import io
 import os
 import subprocess
 import time
@@ -39,12 +40,12 @@ def main():
 
     if HONOR_SUBSBLACKLIST:
         if not os.path.isfile(NOSUBS_LIST_PATH): fatal(NOSUBS_LIST_PATH + ' not found. Make sure to set the config.ini')
-        noSubsList = io.open(NOSUBS_LIST_PATH, 'r', encoding='utf_8').read().split('\n')
+        noSubsList = open(NOSUBS_LIST_PATH, 'r', encoding='utf_8').read().split('\n')
         while '' in noSubsList: noSubsList.remove('')
 
 
     nCount = 0
-    fileList = io.open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8').read().split('\n')
+    fileList = open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8').read().split('\n')
     while '' in fileList: fileList.remove('')
 
     for file in fileList:

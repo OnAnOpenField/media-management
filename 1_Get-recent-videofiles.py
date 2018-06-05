@@ -1,4 +1,5 @@
-import io
+#!/usr/bin/python3
+
 import configparser
 import os
 import platform
@@ -17,7 +18,9 @@ def getCrTime(file):
 
 
 def main():
-    if not os.path.isfile('config.ini'): fatal('Cannot find "config.ini"')
+    if not os.path.isfile('config.ini'):
+        fatal('Cannot find "config.ini"')
+        
     # open config.ini for reading
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -33,7 +36,7 @@ def main():
 
     # open file for writing
     print('Getting recent video files\n')
-    wfile = io.open(RECENT_VIDEOFILES_PATH, 'w', encoding='utf_8')
+    wfile = open(RECENT_VIDEOFILES_PATH, 'w', encoding='utf_8')
 
     # recursively walk through tv shows path and common video files
     currTime = time.time()
@@ -57,8 +60,9 @@ def main():
                     print('Added ' + os.path.basename(file))
                     wfile.write(file + '\n')
 
-
-if __name__ == '__main__':
-    main()
     print('\nDone')
     time.sleep(2)
+
+    
+if __name__ == '__main__':
+    main()
