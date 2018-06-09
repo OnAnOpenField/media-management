@@ -18,9 +18,7 @@ def getCrTime(file):
 
 
 def main():
-    if not os.path.isfile('config.ini'):
-        fatal('Cannot find "config.ini"')
-        
+    if not os.path.isfile('config.ini'): fatal('Cannot find "config.ini"')
     # open config.ini for reading
     config = configparser.ConfigParser()
     config.read('config.ini')

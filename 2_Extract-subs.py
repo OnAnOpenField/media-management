@@ -101,12 +101,14 @@ def main():
         fatal(RECENT_VIDEOFILES_PATH + ' not found. Make sure to set the config.ini')
 
     if HONOR_SUBSBLACKLIST:
-        if not os.path.isfile(NOSUBS_LIST_PATH): fatal(NOSUBS_LIST_PATH + ' not found. Make sure to set the config.ini')
-        noSubsList = open(NOSUBS_LIST_PATH, 'r', encoding='utf_8').read().split('\n')
-        while '' in noSubsList: noSubsList.remove('')
+        if not os.path.isfile(NOSUBS_LIST_PATH):
+            fatal(NOSUBS_LIST_PATH + ' not found. Make sure to set the config.ini')
+        with open(NOSUBS_LIST_PATH, 'r', encoding='utf_8') as noSubsPaths:
+            noSubsList = [l for l in (line.strip() for line in noSubsPaths) if l]
 
-    fileList = open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8').read().split('\n')
-    while '' in fileList: fileList.remove('')
+
+    with open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8') as pathsFile:
+        fileList = [l for l in (line.strip() for line in pathsFile) if l]
 
     nFiles = len(fileList)
     nCount = 0
