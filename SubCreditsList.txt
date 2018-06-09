@@ -1,32 +1,36 @@
 www\.\w+
-\w+\.com
-\w+\.net
-\w+\.org
-\w+\.tk
-\w+\.io
-\w+\.info
-\w+\.ru
-\w+\.uk
-\w+\.ca
-\w+\.de
-\w+\.au
-\w+\.fr
-\w+\.es
+\w+\.com([ ]|$|\W)
+\w+\.net([ ]|$|\W)
+\w+\.org([ ]|$|\W)
+\w+\.tk([ ]|$|\W)
+\w+\.io([ ]|$|\W)
+\w+\.info([ ]|$|\W)
+\w+\.ru([ ]|$|\W)
+\w+\.uk([ ]|$|\W)
+\w+\.ca([ ]|$|\W)
+\w+\.de([ ]|$|\W)
+\w+\.au([ ]|$|\W)
+\w+\.fr([ ]|$|\W)
+\w+\.es([ ]|$|\W)
 rarbg
 thetvdb
-%url%
-opensubtitles
+open *subtitles
+napiprojekt
+tvsubtitles
+thesubdb
+legendastv
 addic7ed
+%url%
 https?://
 [ ]+by *:
-re-sync
+re-?sync
 sync.+correct(ed|ions?)|correct.+sync(c?ed)?
 correct(ions|ed) +by *:?
 improved +by *:
-ripped +by *:
+sub.*ripped +by|ripped +by *:
 synchronized by
 encod(ed|ing) *(done)? by *:?
-subtitles? +by *:?
+subtitles?.+(by|from) *:?
 re-?sync?(ced)? +by *:?
 web-?dl
 web-?rip
