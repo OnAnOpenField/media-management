@@ -93,6 +93,7 @@ def processSubtitles(subFilename, CREDITS_LIST, logFile):
 
     # Read from subtitle file
     encoding = getEncoding(subFilename)
+    # print(encoding)
 
     with open(subFilename, 'r', encoding=encoding) as subFile:
         subfileContents = [l for l in (line.strip() for line in subFile) if l]
@@ -107,7 +108,6 @@ def processSubtitles(subFilename, CREDITS_LIST, logFile):
     # Open subtitle file for writing
     # .test. line.
     # subFile = open(subFilename + '.TEST.srt', 'w', encoding=encoding)
-    # print(encoding)
     subFile = open(subFilename, 'w', encoding=encoding)
 
     print('- Filtering subtitle: {0}'.format(subFilename))
@@ -133,7 +133,7 @@ def processSubtitles(subFilename, CREDITS_LIST, logFile):
 
 def organizeSubtitles(subfileContents, subblockList):
     subblock = []
-    for i in range(len(subfileContents) - 1):
+    for i, line in enumerate(subfileContents[:-1]):
         isLineNum = isTimeStamp(subfileContents[i + 1])
         # If not at end of subblock
         if not isLineNum:
