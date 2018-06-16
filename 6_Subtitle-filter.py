@@ -106,9 +106,9 @@ def processSubtitles(subFilename, CREDITS_LIST, logFile):
 
     # Open subtitle file for writing
     # .test. line.
-    subFile = open(subFilename + '.TEST.srt', 'w', encoding=encoding)
-    print(encoding)
-    # subFile = open(subFilename, 'w', encoding=encoding)
+    # subFile = open(subFilename + '.TEST.srt', 'w', encoding=encoding)
+    # print(encoding)
+    subFile = open(subFilename, 'w', encoding=encoding)
 
     print('- Filtering subtitle: {0}'.format(subFilename))
     logFile.write('- Filtering subtitle: {0}\n\n'.format(subFilename))
