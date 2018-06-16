@@ -26,8 +26,8 @@ ENTITIES_DICT = {
 
 def main():
     # .test. line
-    CONFIG_PATH = 'E:\\Videos\\_Scripts\\config.ini'
-    # CONFIG_PATH = 'config.ini'
+    # CONFIG_PATH = 'E:\\Videos\\_Scripts\\config.ini'
+    CONFIG_PATH = 'config.ini'
     if not os.path.isfile(CONFIG_PATH):
         fatal('Cannot find "config.ini"')
 
