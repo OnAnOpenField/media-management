@@ -22,7 +22,6 @@ def fetchSubs(file):
     filename, ext = os.path.splitext(file)
 
     if not os.path.isfile(file.replace(ext, '.eng.srt')): print('\nFetching subtitles for ' + os.path.basename(file) + '\n')
-    # if not os.path.isfile(file.replace(ext, '.eng.srt')): subprocess.call('filebot -get-subtitles "{file}"'.format(file = file), shell=True)
     if not os.path.isfile(file.replace(ext, '.eng.srt')): subprocess.call('subliminal download -l en "{file}"'.format(file = file), shell=True)
     if os.path.isfile(file.replace(ext, '.en.srt')): os.rename(file.replace(ext, '.en.srt'), file.replace(ext, '.eng.srt'))
 
