@@ -12,7 +12,7 @@ TEXT_FOR_HI_RE = re.compile(r'(\[|\(|\{).*?(\]|\)|\})')
 TIMESTAMP_RE = re.compile(r'\d{1,2}:\d{1,2}:\d{1,2},\d{1,3} *-+> *\d{1,2}:\d{1,2}:\d{1,2},\d{1,3}')
 NON_SPOKEN_WORD_RE = re.compile(r'< *(?:i|b|strong) *>|[\W_]')
 EPISODE_RE = re.compile(r'(.+) - s(\d\d)e(\d\d) - (.+)', re.IGNORECASE)
-MOVIE_RE = re.compile(r'(.+) \((\d\d\d\d)\)')
+MOVIE_RE = re.compile(r'(.+) \((\d\d\d\d)\)$')
 
 ENTITIES_DICT = {
     ' ': ['&nbsp;', '&#160;'],
