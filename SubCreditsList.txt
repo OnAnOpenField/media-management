@@ -28,12 +28,11 @@ sync.+correct(ed|ions?)|correct.+sync(c?ed)?
 correct(ions|ed) +by *:?
 improved +by *:
 sub.*ripped +by|ripped +by *:
-synchronized by
 encod(ed|ing) *(done)? by *:?
 subtitles?.+(by|from) *:?
-re-?sync?(ced)? +by *:?
+(re)?-?sync(ced|hronized)? +by *:?
 web-?dl
 web-?rip
-pirate(-| +)?bay
+pirate[ -]*bay
 torrent downloaded
 season.*\d.*episode.*\d
