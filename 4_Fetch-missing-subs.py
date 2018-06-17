@@ -27,15 +27,19 @@ def fetchSubs(file):
 
 
 def main():
-    if not os.path.isfile('config.ini'): fatal('Cannot find "config.ini"')
+    if not os.path.isfile('config.ini'):
+        fatal('Cannot find "config.ini"')
+
     config = configparser.ConfigParser()
     config.read('config.ini')
 
     HONOR_SUBSBLACKLIST = config['DEFAULT']['HonorSubsBlacklist'] == 'true'
     RECENT_VIDEOFILES_PATH = config['Paths']['RecentVideosPath']
-    if HONOR_SUBSBLACKLIST: NOSUBS_LIST_PATH = config['Paths']['NoSubsListPath']
+    if HONOR_SUBSBLACKLIST:
+        NOSUBS_LIST_PATH = config['Paths']['NoSubsListPath']
 
-    if not os.path.isfile(RECENT_VIDEOFILES_PATH): fatal(RECENT_VIDEOFILES_PATH + ' not found. Make sure to set the config.ini')
+    if not os.path.isfile(RECENT_VIDEOFILES_PATH):
+        fatal(RECENT_VIDEOFILES_PATH + ' not found. Make sure to set the config.ini')
 
     if HONOR_SUBSBLACKLIST:
         if not os.path.isfile(NOSUBS_LIST_PATH): fatal(NOSUBS_LIST_PATH + ' not found. Make sure to set the config.ini')
