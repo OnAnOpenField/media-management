@@ -11,8 +11,8 @@ FONT_TAG_RE = re.compile(r'(< *font.+?>).+?(< */? *font *>)', re.IGNORECASE)
 TEXT_FOR_HI_RE = re.compile(r'(\[|\(|\{).*?(\]|\)|\})')
 TIMESTAMP_RE = re.compile(r'\d{1,2}:\d{1,2}:\d{1,2},\d{1,3} *-+> *\d{1,2}:\d{1,2}:\d{1,2},\d{1,3}')
 NON_SPOKEN_WORD_RE = re.compile(r'< *(?:i|b|strong) *>|[\W_]')
-EPISODE_RE = re.compile(r'(.+) - s(\d\d)e(\d\d) - (.+)', re.IGNORECASE)
-MOVIE_RE = re.compile(r'(.+) \((\d\d\d\d)\)$')
+EPISODE_BASENAME_RE = re.compile(r'(.+) - S(\d\d)E(\d\d) - (.+)\.\w+')
+MOVIE_BASENAME_RE = re.compile(r'(.+) \((\d\d\d\d)\)\.\w+')
 
 ENTITIES_DICT = {
     ' ': ['&nbsp;', '&#160;'],
@@ -375,8 +375,8 @@ def getIdentifyingVideoExp(subFilename):
     basename = os.path.basename(subFilename)
     dirtStrings = []
 
-    if EPISODE_RE.match(basename):
-        mGroups = EPISODE_RE.match(basename).groups()
+    if EPISODE_BASENAME_RE.match(basename):
+        mGroups = EPISODE_BASENAME_RE.match(basename).groups()
 
         seriesName = mGroups[0].lower()
         seasonNum = mGroups[1]
@@ -385,8 +385,8 @@ def getIdentifyingVideoExp(subFilename):
 
         dirtStrings.append('{0}.+{1}'.format(seriesName, episodeTitle))
         dirtStrings.append('s(eason)?\D*0?{0}.*e(pisode)?\D*0?{1}(.*{2})?'.format(seasonNum, episodeNum, episodeTitle))
-    elif MOVIE_RE.match(basename):
-        mGroups = MOVIE_RE.match(basename).groups()
+    elif MOVIE_BASENAME_RE.match(basename):
+        mGroups = MOVIE_BASENAME_RE.match(basename).groups()
 
         movieName = mGroups[0].lower()
         movieYear = mGroups[1]
