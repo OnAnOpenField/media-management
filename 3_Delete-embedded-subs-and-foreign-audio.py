@@ -54,7 +54,8 @@ def processMKV(videoPath):
     if hasSubs:
         param += ' -S '
 
-    print('"' + param + '"')
+    # .test line
+    # print('"' + param + '"')
 
     if param:
         filename, ext = os.path.splitext(videoPath)
