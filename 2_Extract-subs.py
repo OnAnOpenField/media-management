@@ -14,15 +14,10 @@ EXTRACT_FORCEDSUBS = True
 # language identifiers for filename when checking if a subtitle companion exists for a video: eg. 'video_name.eng.srt'
 ALLOWED_LANGUAGES = ['eng', 'und']
 
-# types of subtitles to look for in mkv containers and their corresponding file extension
+# types of subtitles to search for in mkv containers and their corresponding file extension
 ALLOWED_SUBS = {
     'SubRip/SRT': 'srt', 
     'SubStationAlpha': 'ass'
-}
-
-SUBTITLE_PROPERTIES = {
-    'sdh': ['sdh', '(hearing)?.*impaired', 'HI'], 
-    'eng_extras': ['commentary', 'non.*english', 'foreign']
 }
 
 def main():
@@ -117,11 +112,6 @@ def extractSub(videoPath, videoData, wantedLang='eng', extraIdentifier='', allow
         if isWantedTrack(track, wantedLang, allowForced, excludedTrackNames):
             subExt = ALLOWED_SUBS[track['codec']]
             subprocess.call('mkvextract tracks "{0}" {1}:"{2}"'.format(videoPath, track['id'], filename + extraIdentifier+ '.' + wantedLang + '.' + subExt), shell=True)
-            # .test. lines
-            # print(excludedTrackNames)
-            # print('extracting track:', track['id'], '. lang:', track['properties']['language'], track['codec'], 
-            #     'track_name=', track['properties'].get('track_name', ''), 'forced_track:', track['properties']['forced_track'])
-            # print(filename + extraIdentifier + '.' + wantedLang + '.' + subExt)
             print('')
             break
 
