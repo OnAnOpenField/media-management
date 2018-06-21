@@ -68,6 +68,9 @@ def main():
             continue
         processVideo(videoPath)
 
+    print('\nDone')
+    time.sleep(2)
+
 
 def processVideo(videoPath):
     videoData = getVideoData(videoPath)
@@ -163,5 +166,3 @@ def fatal(errMsg):
 
 if __name__ == '__main__':
     main()
-    print('\nDone')
-    time.sleep(2)
