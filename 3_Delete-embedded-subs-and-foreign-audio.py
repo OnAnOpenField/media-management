@@ -60,7 +60,7 @@ def processMKV(videoPath):
     if param:
         filename, ext = os.path.splitext(videoPath)
         TEMPFILE = filename + '.TEMP.mkv'
-        
+
         print('Deleting embedded subs and/or unwanted audio from {0}\n'.format(os.path.basename(videoPath)))
         subprocess.call('mkvmerge -o "{outputFile}" {param} "{inputFile}"'.format(outputFile=TEMPFILE, param=param, inputFile=videoPath), shell=True)
         os.remove(videoPath)
@@ -112,58 +112,6 @@ def isTrackNameDirty(trackName):
             return True
 
     return False
-
-
-
-def processMKV2(file):
-    bOutput = subprocess.check_output('mkvmerge --identify-verbose "{0}"'.format(file), shell=True)
-    outputlines = [line.lower() for line in bOutput.decode().split(sysEOL)]
-
-    hasWantedAud = False
-    hasUnwantedAud = False
-    hasSubs = False
-    param = ''
-    nTrack = -1
-
-    for line in outputlines:
-        m = AUDIO_RE.match(line)
-        if m and not 'language:eng' in line and not 'language:und' in line or 'commentary' in line:
-            hasUnwantedAud = True
-        if 'subtitles' in line:
-            hasSubs = True
-
-    if hasUnwantedAud:
-        for line in outputlines:
-            m = AUDIO_RE.match(line)
-            if m and 'language:eng' in line and not 'commentary' in line:
-                hasWantedAud = True
-                break
-            nTrack += 1
-
-
-    if hasUnwantedAud and hasWantedAud:
-        param += ' -a ' + str(nTrack)
-    if hasSubs:
-        param += ' -S'
-
-    if param:
-        TEMPFILE = file.replace('.mkv', '.TEMP.mkv')
-        print('Deleting embedded subs and/or unwanted audio from ' + os.path.basename(file) + '\n')
-        subprocess.call('mkvmerge -o "{outputFile}" {param} "{inputFile}"'.format(outputFile=TEMPFILE, param=param, inputFile=file), shell=True)
-
-        # allow time for previous process to properly close
-        time.sleep(0.5)
-        os.remove(file)
-        # allow time for OS to remove file
-        time.sleep(0.5)
-
-        try:
-            os.rename(TEMPFILE, file)
-        except Exception as ex:
-            print(' >> ', ex)
-            pass
-
-        print('')
 
 
 def fatal(errMsg):
