@@ -1,87 +1,29 @@
 #!/usr/bin/python3
 
 import configparser
+import json
 import os
+import re
 import subprocess
 import time
+import sys
 
-sysEOL = '\n' if os.name == 'posix' else '\r\n'
+# Temporary EXTRACT_FORCEDSUBS value. Actual value gathered from config.ini
+EXTRACT_FORCEDSUBS = True
 
-def fatal(errMsg):
-    print('[FATAL] ' + errMsg)
-    print('[FATAL] Program is now exiting.')
-    time.sleep(2)
-    exit()
+# language identifiers for filename when checking if a subtitle companion exists for a video: eg. 'video_name.eng.srt'
+ALLOWED_LANGUAGES = ['eng', 'und']
 
+# types of subtitles to look for in mkv containers and their corresponding file extension
+ALLOWED_SUBS = {
+    'SubRip/SRT': 'srt', 
+    'SubStationAlpha': 'ass'
+}
 
-def isPathBlacklisted(FILEPATH, noSubsList):
-    for str in noSubsList:
-        if str in FILEPATH.lower():
-            return True
-
-    return False
-
-
-def lineContains(line, *tup):
-    for str in tup:
-        if not str in line:
-            return False
-
-    return True
-
-
-def beginExtraction(file, EXTRACT_FORCEDSUBS):
-    filename, ext = os.path.splitext(file)
-    bOutput = subprocess.check_output('mkvmerge --identify-verbose "{file}"'.format(file = file), shell=True)
-    outputlines = [line.lower() for line in bOutput.decode().split(sysEOL)]
-
-    nTrack = -1
-    # Extract english sub, no forced, no SDH
-    if not os.path.isfile(file.replace(ext, '.eng.srt')):
-        for line in outputlines:
-            if lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:0') and not 'sdh' in line and not 'commentary' in line:
-                print('')
-                subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.eng.srt')), shell=True)
-                print('')
-                break
-            nTrack += 1
-
-
-    nTrack = -1
-    # If previous extraction failed, extract english SDH sub, no forced
-    if not os.path.isfile(file.replace(ext, '.eng.srt')):
-        for line in outputlines:
-            if lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:0', 'sdh') and not 'commentary' in line:
-                print('')
-                subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.eng.srt')), shell=True)
-                print('')
-                break
-            nTrack += 1
-
-
-    nTrack = -1
-    # In spite of previous extractions, and if allowed by the config.ini, extract english forced sub
-    if EXTRACT_FORCEDSUBS and not os.path.isfile(file.replace(ext, '.FORCED.eng.srt')):
-        for line in outputlines:
-            if lineContains(line, 'language:eng', 'subrip/srt', 'forced_track:1') and not 'commentary' in line:
-                print('')
-                subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.FORCED.eng.srt')), shell=True)
-                print('')
-                break
-            nTrack += 1
-
-
-    nTrack = -1
-    # If previous extractions failed, extract undefined language sub, no forced, allow SDH
-    if not os.path.isfile(file.replace(ext, '.eng.srt')) and not os.path.isfile(file.replace(ext, '.UND.srt')):
-        for line in outputlines:
-            if lineContains(line, 'language:und', 'subrip/srt', 'forced_track:0'):
-                print('')
-                subprocess.call('mkvextract tracks "{file}" {nTrack}:"{outputName}"'.format(file = file, nTrack = nTrack, outputName = file.replace(ext, '.UND.srt')), shell=True)
-                print('')
-                break
-            nTrack += 1
-
+SUBTITLE_PROPERTIES = {
+    'sdh': ['sdh', '(hearing)?.*impaired', 'HI'], 
+    'eng_extras': ['commentary', 'non.*english', 'foreign']
+}
 
 def main():
     if not os.path.isfile('config.ini'): fatal('Cannot find "config.ini"')
@@ -90,12 +32,11 @@ def main():
     config.read('config.ini')
 
     # get values from config file
-    HONOR_SUBSBLACKLIST = config['DEFAULT']['HonorSubsBlacklist'] == 'true'
+    global EXTRACT_FORCEDSUBS
     EXTRACT_FORCEDSUBS = config['DEFAULT']['ExtractForcedSubs'] == 'true'
+    HONOR_SUBSBLACKLIST = config['DEFAULT']['HonorSubsBlacklist'] == 'true'
     RECENT_VIDEOFILES_PATH = config['Paths']['RecentVideosPath']
-
-    if HONOR_SUBSBLACKLIST:
-        NOSUBS_LIST_PATH = config['Paths']['NoSubsListPath']
+    if HONOR_SUBSBLACKLIST: NOSUBS_LIST_PATH = config['Paths']['NoSubsListPath']
 
     if not os.path.isfile(RECENT_VIDEOFILES_PATH):
         fatal(RECENT_VIDEOFILES_PATH + ' not found. Make sure to set the config.ini')
@@ -105,23 +46,119 @@ def main():
             fatal(NOSUBS_LIST_PATH + ' not found. Make sure to set the config.ini')
         with open(NOSUBS_LIST_PATH, 'r', encoding='utf_8') as noSubsPaths:
             noSubsList = [l for l in (line.strip() for line in noSubsPaths) if l]
+    else:
+        noSubsList = []
 
 
-    with open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8') as pathsFile:
-        fileList = [l for l in (line.strip() for line in pathsFile) if l]
+    if len(sys.argv) < 2:
+        with open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8') as pathsFile:
+            videoList = [l for l in (line.strip() for line in pathsFile) if l and l.endswith('.mkv')]
+    else:
+        videoList = [arg for arg in sys.argv[1:] if arg.endswith('.mkv')]
 
-    nFiles = len(fileList)
-    nCount = 0
 
-    for file in fileList:
-        nCount += 1
-        print('Analyzing file ', nCount, ' of ', nFiles, ': ', os.path.basename(file))
-        if not os.path.isfile(file):
-            print(file + ' does not exist.')
+    nFiles = len(videoList)
+
+    for i, videoPath in enumerate(videoList):
+        print('Analyzing mkv file {0} of {1}: {2}'.format(i + 1, nFiles, os.path.basename(videoPath)))
+        if not os.path.isfile(videoPath):
+            print(videoPath + ' does not exist.')
             continue
+        if isPathBlacklisted(videoPath, noSubsList):
+            continue
+        processVideo(videoPath)
 
-        if HONOR_SUBSBLACKLIST and isPathBlacklisted(file, noSubsList): continue
-        beginExtraction(file, EXTRACT_FORCEDSUBS)
+
+def processVideo(videoPath):
+    videoData = getVideoData(videoPath)
+
+    # Extract english sub, no forced, no SDH
+    if not hasAccompanyingSubtitle(videoPath): 
+        extractSub(videoPath, videoData, wantedLang='eng', excludedTrackNames=['commentary', 'no.*english', 'forced', 'foreign', r'\bSDH\b', '(deaf)?hard.*hearing', '(hearing)?.*impaired'])
+
+    # # If previous extraction failed, extract english SDH sub, no forced
+    if not hasAccompanyingSubtitle(videoPath):
+        extractSub(videoPath, videoData, wantedLang='eng', excludedTrackNames=['commentary', 'no.*english', 'forced', 'foreign'])
+
+    # # In spite of previous extractions, and if allowed by the config.ini, extract english forced sub
+    if EXTRACT_FORCEDSUBS and not hasAccompanyingSubtitle(videoPath, extraIdentifier='.forced'):
+        extractSub(videoPath, videoData, wantedLang='eng', extraIdentifier='.forced', allowForced=True)
+        # if forcedSubsMatchRegularSubs():
+        #     delete *.FORCED.eng.<ext>
+
+    # # If previous extractions failed, extract undefined language sub, no forced, allow SDH
+    if not hasAccompanyingSubtitle(videoPath):
+        extractSub(videoPath, videoData, wantedLang='und', allowForced=False, excludedTrackNames=['commentary', 'forced'])
+
+
+def hasAccompanyingSubtitle(videoPath, extraIdentifier=''):
+    dirname = os.path.dirname(videoPath)
+    # basename == '$filename.$ext'
+    basename = os.path.basename(videoPath)
+    # filename == '$filename' # no extension
+    filename, ext = os.path.splitext(basename)
+
+    for codec in ALLOWED_SUBS:
+        for lang in ALLOWED_LANGUAGES:
+            subtitleName = '{0}{1}{2}{3}'.format(filename, extraIdentifier, '.' + lang, '.' + ALLOWED_SUBS[codec])
+            if os.path.isfile(os.path.join(dirname, subtitleName)):
+                return True
+
+    return False
+
+
+def extractSub(videoPath, videoData, wantedLang='eng', extraIdentifier='', allowForced=False, excludedTrackNames=[]):
+    filename, ext = os.path.splitext(videoPath)
+
+    for track in videoData['tracks']:
+        if isWantedTrack(track, wantedLang, allowForced, excludedTrackNames):
+            subExt = ALLOWED_SUBS[track['codec']]
+            subprocess.call('mkvextract tracks "{0}" {1}:"{2}"'.format(videoPath, track['id'], filename + extraIdentifier+ '.' + wantedLang + '.' + subExt), shell=True)
+            # .test. lines
+            # print(excludedTrackNames)
+            # print('extracting track:', track['id'], '. lang:', track['properties']['language'], track['codec'], 
+            #     'track_name=', track['properties'].get('track_name', ''), 'forced_track:', track['properties']['forced_track'])
+            # print(filename + extraIdentifier + '.' + wantedLang + '.' + subExt)
+            print('')
+            break
+
+
+def isWantedTrack(track, wantedLang, allowForced, excludedTrackNames):
+    if track['properties']['language'] == wantedLang and track['properties']['forced_track'] == allowForced:
+        if not track['codec'] in ALLOWED_SUBS:
+            return False
+        trackName = track['properties'].get('track_name', '')
+        for excludedTrackName in excludedTrackNames:
+            exclude_re = re.compile(excludedTrackName, re.IGNORECASE)
+            if exclude_re.search(trackName):
+                return False
+    else:
+        return False
+
+    return True
+                        
+
+def getVideoData(videoPath):
+    rawOutput = subprocess.check_output('mkvmerge -J "{0}"'.format(videoPath), shell=True)
+    output = rawOutput.decode()
+    videoData = json.loads(output)
+
+    return videoData
+
+
+def isPathBlacklisted(videoPath, noSubsList):
+    for str in noSubsList:
+        if str in videoPath.lower():
+            return True
+
+    return False
+
+
+def fatal(errMsg):
+    print('[FATAL] ' + errMsg)
+    print('[FATAL] Program is now exiting.')
+    time.sleep(2)
+    exit()
 
 
 if __name__ == '__main__':
