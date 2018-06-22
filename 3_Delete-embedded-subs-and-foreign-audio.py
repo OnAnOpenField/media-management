@@ -31,7 +31,7 @@ def main():
     nFiles = len(videoList)
 
     for i, videoPath in enumerate(videoList):
-        print('Analyzing file {0} of {1}: {2}'.format(i + 1, nFiles, os.path.basename(videoPath)))
+        print('Analyzing MKV file {0} of {1}: {2}'.format(i + 1, nFiles, os.path.basename(videoPath)))
         if not os.path.isfile(videoPath):
             print(videoPath + ' does not exist.')
             continue

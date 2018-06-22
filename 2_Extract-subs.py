@@ -57,7 +57,7 @@ def main():
     nFiles = len(videoList)
 
     for i, videoPath in enumerate(videoList):
-        print('Analyzing mkv file {0} of {1}: {2}'.format(i + 1, nFiles, os.path.basename(videoPath)))
+        print('Analyzing MKV file {0} of {1}: {2}'.format(i + 1, nFiles, os.path.basename(videoPath)))
         if not os.path.isfile(videoPath):
             print(videoPath + ' does not exist.')
             continue
@@ -114,7 +114,9 @@ def extractSub(videoPath, tracks, wantedLang='eng', extraIdentifier='', allowFor
         for track in tracks:
             if isWantedTrack(track, wantedLang, wantedCodec, allowForced, excludedTrackNames):
                 subExt = ALLOWED_SUBS[track['codec']]
-                subprocess.call('mkvextract tracks "{0}" {1}:"{2}"\n'.format(videoPath, track['id'], filename + extraIdentifier+ '.' + wantedLang + '.' + subExt), shell=True)
+                print('')
+                subprocess.call('mkvextract tracks "{0}" {1}:"{2}"'.format(videoPath, track['id'], filename + extraIdentifier+ '.' + wantedLang + '.' + subExt), shell=True)
+                print('')
                 return
 
 
