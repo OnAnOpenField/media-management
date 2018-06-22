@@ -10,7 +10,7 @@ import sys
 FONT_TAG_RE = re.compile(r'(< *font.+?>).+?(< */? *font *>)', re.IGNORECASE)
 TEXT_FOR_HI_RE = re.compile(r'(\[|\(|\{).*?(\]|\)|\})')
 TIMESTAMP_RE = re.compile(r'\d{1,2}:\d{1,2}:\d{1,2},\d{1,3} *-+> *\d{1,2}:\d{1,2}:\d{1,2},\d{1,3}')
-NON_SPOKEN_WORD_RE = re.compile(r'< *(?:i|b|strong) *>|[\W_]')
+NON_SPOKEN_WORD_RE = re.compile(r'</? *(?:i|b|strong) *>|[\W_]')
 EPISODE_BASENAME_RE = re.compile(r'(.+) - S(\d\d)E(\d\d) - (.+)\.\w+')
 MOVIE_BASENAME_RE = re.compile(r'(.+) \((\d\d\d\d)\)\.\w+')
 
