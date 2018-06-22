@@ -8,13 +8,15 @@ import subprocess
 import time
 import sys
 
-# Temporary EXTRACT_FORCEDSUBS value. Actual value gathered from config.ini
+# temporary EXTRACT_FORCEDSUBS value. Actual value gathered from config.ini
 EXTRACT_FORCEDSUBS = True
 
-# language identifiers for filename when checking if a subtitle companion exists for a video: eg. 'video_name.eng.srt'
+# language identifiers for filename when checking if a subtitle companion exists for a video: eg. 'video_name.mkv' --> 'video_name.eng.srt'
 ALLOWED_LANGUAGES = ['eng', 'und']
 
+# subtitle extension identifiers for filename when checking if a subtitle companion exists for a video: eg. 'video_name.eng.srt'
 # types of subtitles to search for in mkv containers and their corresponding file extension
+# ordered in priority from most preferred to least
 ALLOWED_SUBS = {
     'SubRip/SRT': 'srt', 
     'SubStationAlpha': 'ass'
@@ -72,21 +74,21 @@ def processVideo(videoPath):
 
     # Extract english sub, no forced, no SDH
     if not hasAccompanyingSubtitle(videoPath): 
-        extractSub(videoPath, videoData, wantedLang='eng', excludedTrackNames=['commentary', 'no.*english', 'forced', 'foreign', r'\bSDH\b', '(deaf)?hard.*hearing', '(hearing)?.*impaired'])
+        extractSub(videoPath, videoData['tracks'], wantedLang='eng', excludedTrackNames=['commentary', 'no.*english', 'forced', 'foreign', r'\bSDH\b', '(deaf)?hard.*hearing', '(hearing)?.*impaired'])
 
     # # If previous extraction failed, extract english SDH sub, no forced
     if not hasAccompanyingSubtitle(videoPath):
-        extractSub(videoPath, videoData, wantedLang='eng', excludedTrackNames=['commentary', 'no.*english', 'forced', 'foreign'])
+        extractSub(videoPath, videoData['tracks'], wantedLang='eng', excludedTrackNames=['commentary', 'no.*english', 'forced', 'foreign'])
 
     # # In spite of previous extractions, and if allowed by the config.ini, extract english forced sub
     if EXTRACT_FORCEDSUBS and not hasAccompanyingSubtitle(videoPath, extraIdentifier='.forced'):
-        extractSub(videoPath, videoData, wantedLang='eng', extraIdentifier='.forced', allowForced=True)
+        extractSub(videoPath, videoData['tracks'], wantedLang='eng', extraIdentifier='.forced', allowForced=True)
         # if forcedSubsMatchRegularSubs():
         #     delete *.FORCED.eng.<ext>
 
     # # If previous extractions failed, extract undefined language sub, no forced, allow SDH
     if not hasAccompanyingSubtitle(videoPath):
-        extractSub(videoPath, videoData, wantedLang='und', allowForced=False, excludedTrackNames=['commentary', 'forced'])
+        extractSub(videoPath, videoData['tracks'], wantedLang='und', excludedTrackNames=['commentary', 'forced'])
 
 
 def hasAccompanyingSubtitle(videoPath, extraIdentifier=''):
@@ -105,28 +107,26 @@ def hasAccompanyingSubtitle(videoPath, extraIdentifier=''):
     return False
 
 
-def extractSub(videoPath, videoData, wantedLang='eng', extraIdentifier='', allowForced=False, excludedTrackNames=[]):
+def extractSub(videoPath, tracks, wantedLang='eng', extraIdentifier='', allowForced=False, excludedTrackNames=[]):
     filename, ext = os.path.splitext(videoPath)
 
-    for track in videoData['tracks']:
-        if isWantedTrack(track, wantedLang, allowForced, excludedTrackNames):
-            subExt = ALLOWED_SUBS[track['codec']]
-            subprocess.call('mkvextract tracks "{0}" {1}:"{2}"'.format(videoPath, track['id'], filename + extraIdentifier+ '.' + wantedLang + '.' + subExt), shell=True)
-            print('')
-            break
+    for wantedCodec in ALLOWED_SUBS:
+        for track in tracks:
+            if isWantedTrack(track, wantedLang, wantedCodec, allowForced, excludedTrackNames):
+                subExt = ALLOWED_SUBS[track['codec']]
+                subprocess.call('mkvextract tracks "{0}" {1}:"{2}"\n'.format(videoPath, track['id'], filename + extraIdentifier+ '.' + wantedLang + '.' + subExt), shell=True)
+                return
 
 
-def isWantedTrack(track, wantedLang, allowForced, excludedTrackNames):
-    if track['properties']['language'] == wantedLang and track['properties']['forced_track'] == allowForced:
-        if not track['codec'] in ALLOWED_SUBS:
-            return False
-        trackName = track['properties'].get('track_name', '')
-        for excludedTrackName in excludedTrackNames:
-            exclude_re = re.compile(excludedTrackName, re.IGNORECASE)
-            if exclude_re.search(trackName):
-                return False
-    else:
+def isWantedTrack(track, wantedLang, wantedCodec, allowForced, excludedTrackNames):
+    if track['properties']['language'] != wantedLang or track['codec'] != wantedCodec or track['properties']['forced_track'] != allowForced:
         return False
+
+    trackName = track['properties'].get('track_name', '')
+    for excludedTrackName in excludedTrackNames:
+        exclude_re = re.compile(excludedTrackName, re.IGNORECASE)
+        if exclude_re.search(trackName):
+            return False
 
     return True
                         
