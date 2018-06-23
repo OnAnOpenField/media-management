@@ -1,17 +1,18 @@
-www\.\w+
-\w+\.com\b
-\w+\.net\b
-\w+\.org\b
-\w+\.tk\b
-\w+\.io\b
-\w+\.info\b
-\w+\.ru\b
-\w+\.uk\b
-\w+\.ca\b
-\w+\.de\b
-\w+\.au\b
-\w+\.fr\b
-\w+\.es\b
+www\.\w{3,}
+\w{3,}\.com\b
+\w{3,}\.net\b
+\w{3,}\.org\b
+\w{3,}\.tk\b
+\w{3,}\.io\b
+\w{3,}\.info\b
+\w{3,}\.ru\b
+\w{3,}\.uk\b
+\w{3,}\.ca\b
+\w{3,}\.de\b
+\w{3,}\.au\b
+\w{3,}\.fr\b
+\w{3,}\.es\b
+https?://
 rarbg
 thetvdb
 open *subtitles
@@ -22,7 +23,6 @@ legendastv
 addic7ed
 %url%
 \bSDH\b
-https?://
 [ ]+by *:
 re-?sync
 sync.+correct(ed|ions?)|correct.+sync(c?ed)?
@@ -30,7 +30,7 @@ correct(ions|ed) +by *:?
 improved +by *:
 sub.*ripped +by|ripped +by *:
 encod(ed|ing) *(done)? by *:?
-subtitles?.+(by|from) *:?
+sub(titles?)?.+(by|from) *:?
 (re)?-?sync(ced|hronized)? +by *:?
 web-?dl
 web-?rip
