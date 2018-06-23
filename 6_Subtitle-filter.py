@@ -10,7 +10,7 @@ import sys
 FONT_TAG_RE = re.compile(r'(< *font.+?>).+?(< */? *font *>)', re.IGNORECASE)
 TEXT_FOR_HI_RE = re.compile(r'(\[|\(|\{).*?(\]|\)|\})')
 TIMESTAMP_RE = re.compile(r'\d{1,2}:\d{1,2}:\d{1,2},\d{1,3} *-+> *\d{1,2}:\d{1,2}:\d{1,2},\d{1,3}')
-NON_SPOKEN_WORD_RE = re.compile(r'</? *(?:i|b|strong) *>|[\W_]')
+NON_SPOKEN_WORD_RE = re.compile(r'< */? *(?:i|b|strong) *>|[\W_]')
 EPISODE_BASENAME_RE = re.compile(r'(.+) - S(\d\d)E(\d\d) - (.+)\.\w+')
 MOVIE_BASENAME_RE = re.compile(r'(.+) \((\d\d\d\d)\)\.\w+')
 
@@ -23,6 +23,7 @@ ENTITIES_DICT = {
     '\'': ['&apos;', '&#39;']
 }
 # '’
+# \w[ ]+\W
 
 def main():
     # .test. line
@@ -93,10 +94,17 @@ def processSubtitles(subFilename, CREDITS_LIST, logFile):
 
     # Read from subtitle file
     encoding = getEncoding(subFilename)
-    # print(encoding)
+    # .test. line
+    # encoding = 'iso8859_1'
 
-    with open(subFilename, 'r', encoding=encoding) as subFile:
-        subfileContents = [l for l in (line.strip() for line in subFile) if l]
+    try:
+        with open(subFilename, 'r', encoding=encoding) as subFile:
+            subfileContents = [l for l in (line.strip() for line in subFile) if l]
+    except UnicodeDecodeError as e:
+        subFile.close()
+        print(' <>UnicodeDecodeError,', os.path.basename(subFilename), encoding, ':', e)
+        logFile.write(' <>UnicodeDecodeError, ' + os.path.basename(subFilename)+ ', ' + encoding + ':' + str(e) + '\n')
+        return 0
 
     subFile.close()
     organizeSubtitles(subfileContents, subblockList)
@@ -110,8 +118,8 @@ def processSubtitles(subFilename, CREDITS_LIST, logFile):
     # subFile = open(subFilename + '.TEST.srt', 'w', encoding=encoding)
     subFile = open(subFilename, 'w', encoding=encoding)
 
-    print('- Filtering subtitle: {0}'.format(subFilename))
-    logFile.write('- Filtering subtitle: {0}\n\n'.format(subFilename))
+    print(' - Filtering subtitle: {0}\n'.format(subFilename))
+    logFile.write(' - Filtering subtitle: {0}\n\n'.format(subFilename))
 
     newSubblockList = []
     filterSubtitles(subblockList, newSubblockList, CREDITS_RE, logFile)
@@ -150,8 +158,6 @@ def organizeSubtitles(subfileContents, subblockList):
 
 def filterSubtitles(subblockList, newSubblockList, CREDITS_RE, logFile):
     for lineNum, subblock in enumerate(subblockList):
-        oldBlock = []
-        oldBlock[:] = subblock
         tempBlock = []
 
         # check for credits
@@ -162,25 +168,23 @@ def filterSubtitles(subblockList, newSubblockList, CREDITS_RE, logFile):
 
         # check for font tags
         if isSubblockDirty(subblock, FONT_TAG_RE, regex=True):
-            removeFontTags(subblock)
             logFile.write('\t>> Stripped font tags from line {0}:\n'.format(str(lineNum + 1)))
-            logFile.write('\t\t' + '\n\t\t'.join(oldBlock) + '\n')
+            logFile.write('\t\t' + '\n\t\t'.join(subblock) + '\n')
+            removeFontTags(subblock)
             logFile.write('\t\t\t-->\n\t\t' + '\n\t\t'.join(subblock) + '\n\n')
 
         # check for HI/SDH text
         if isSubblockDirty(subblock, TEXT_FOR_HI_RE, regex=True):
-            removeTextForHI(subblock)
-
             logFile.write('\t>> Removed Text-For-HI from line {0}:\n'.format(str(lineNum + 1)))
-            logFile.write('\t\t' + '\n\t\t'.join(oldBlock) + '\n')
+            logFile.write('\t\t' + '\n\t\t'.join(subblock) + '\n')
+            removeTextForHI(subblock)
             logFile.write('\t\t\t-->\n\t\t' + '\n\t\t'.join(subblock) + '\n\n')
 
         # check for HTML entities
         if isSubblockDirty(subblock, *ENTITIES_DICT, dict=True):
-            fixEntities(subblock)
-
             logFile.write('\t>> Fixed entities in line {0}:\n'.format(str(lineNum + 1)))
-            logFile.write('\t\t' + '\n\t\t'.join(oldBlock) + '\n')
+            logFile.write('\t\t' + '\n\t\t'.join(subblock) + '\n')
+            fixEntities(subblock)
             logFile.write('\t\t\t-->\n\t\t' + '\n\t\t'.join(subblock) + '\n\n')
 
         # check for non-spoken lines
