@@ -1,17 +1,17 @@
 www\.\w+
-\w+\.com([ ]|$|\W)
-\w+\.net([ ]|$|\W)
-\w+\.org([ ]|$|\W)
-\w+\.tk([ ]|$|\W)
-\w+\.io([ ]|$|\W)
-\w+\.info([ ]|$|\W)
-\w+\.ru([ ]|$|\W)
-\w+\.uk([ ]|$|\W)
-\w+\.ca([ ]|$|\W)
-\w+\.de([ ]|$|\W)
-\w+\.au([ ]|$|\W)
-\w+\.fr([ ]|$|\W)
-\w+\.es([ ]|$|\W)
+\w+\.com\b
+\w+\.net\b
+\w+\.org\b
+\w+\.tk\b
+\w+\.io\b
+\w+\.info\b
+\w+\.ru\b
+\w+\.uk\b
+\w+\.ca\b
+\w+\.de\b
+\w+\.au\b
+\w+\.fr\b
+\w+\.es\b
 rarbg
 thetvdb
 open *subtitles
