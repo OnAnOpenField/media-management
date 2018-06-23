@@ -21,6 +21,7 @@ thesubdb
 legendastv
 addic7ed
 %url%
+\bSDH\b
 https?://
 [ ]+by *:
 re-?sync
