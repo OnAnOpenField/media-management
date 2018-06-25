@@ -9,7 +9,7 @@ import sys
 
 FONT_TAG_RE = re.compile(r'(< *font.+?>).+?(< */? *font *>)', re.IGNORECASE)
 TEXT_FOR_HI_RE = re.compile(r'(\[|\(|\{).*?(\]|\)|\})')
-TIMESTAMP_RE = re.compile(r'\d{1,2}:\d{1,2}:\d{1,2},\d{1,3} *-+> *\d{1,2}:\d{1,2}:\d{1,2},\d{1,3}')
+TIMESTAMP_RE = re.compile(r'[ ]*\d{1,2}:\d{1,2}:\d{1,2},\d{1,3} *-+> *\d{1,2}:\d{1,2}:\d{1,2},\d{1,3}[ ]*$')
 NON_SPOKEN_WORD_RE = re.compile(r'< *(?:i|b|strong) *>[\W_]*?< */? *(?:i|b|strong) *>|[\W_]')
 EPISODE_BASENAME_RE = re.compile(r'(.+) - S(\d\d)E(\d\d) - (.+)\.\w+')
 MOVIE_BASENAME_RE = re.compile(r'(.+) \((\d\d\d\d)\)\.\w+')
@@ -61,7 +61,6 @@ def main():
             SUBFILES_LIST = [l for l in (line.strip() for line in f) if l]
     else:
         SUBFILES_LIST = sys.argv[1:]
-
 
     totalFiles = len(SUBFILES_LIST)
 
@@ -129,6 +128,8 @@ def processSubtitles(subFilename, CREDITS_LIST, logFile):
 
         subFile.write('\n')
         wLineNum += 1
+
+    subFile.close()
 
     return 1
 
@@ -268,13 +269,11 @@ def removeFontTags(subblock):
         breakSpanList.append((prevIndex + len(line), prevIndex + len(line) + 4))
         prevIndex += len(line) + 4
 
-
     matches = re.finditer(FONT_TAG_RE, text)
     for match in matches:
         for i in range(len(match.groups())):
             i += 1
             groupsSpanList.append(match.span(i))
-
 
     i = 0
     tempLine = ''
@@ -317,7 +316,6 @@ def removeTextForHI(subblock):
         text += line + '<br>'
         breakSpanList.append((prevIndex + len(line), prevIndex + len(line) + 4))
         prevIndex += len(line) + 4
-
 
     matches = re.finditer(TEXT_FOR_HI_RE, text)
     matchSpanList = [match.span() for match in matches]
@@ -395,7 +393,7 @@ def getIdentifyingVideoExp(subFilename):
 
 
 def isTimeStamp(sTest):
-    m = TIMESTAMP_RE.search(sTest)
+    m = TIMESTAMP_RE.match(sTest)
     return m is not None
 
 
@@ -403,6 +401,7 @@ def getEncoding(subFilename):
     f = open(subFilename, 'rb')
     raw_contents = f.read()
     encoding = chardet.detect(raw_contents)['encoding']
+    f.close()
 
     if b't\x00h\x00e\x00' in raw_contents:  # only for english-written files. looks for byte sequence that resolves to 'the'
         return 'utf_16_le'
