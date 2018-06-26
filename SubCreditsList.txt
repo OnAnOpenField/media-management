@@ -1,4 +1,4 @@
-www\.\w{3,}
+www\.\w+
 \w{3,}\.com\b
 \w{3,}\.net\b
 \w{3,}\.org\b
@@ -26,12 +26,12 @@ addic7ed
 [ ]+by *:
 re-?sync
 sync.+correct(ed|ions?)|correct.+sync(c?ed)?
-correct(ions|ed) +by *:?
+correct(ions|ed) +by
 improved +by *:
-sub.*ripped +by|ripped +by *:
-encod(ed|ing) *(done)? by *:?
-sub(titles?)?.+(by|from) *:?
-(re)?-?sync(ced|hronized)? +by *:?
+sub.*ripped +by|ripped +by
+encod(ed|ing) +(done)? by
+sub[st].+(by|from|repaired|fixed)
+(re-?)?sync.+by
 web-?dl
 web-?rip
 pirate[ -]*bay
