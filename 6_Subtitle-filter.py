@@ -64,39 +64,40 @@ def main():
 
     totalFiles = len(SUBFILES_LIST)
 
-    for i, subFilename in enumerate(SUBFILES_LIST):
-        tempList = getIdentifyingVideoExp(subFilename)
-        print('Processing file {0} of {1}: {2}'.format(i + 1, totalFiles, os.path.basename(subFilename)))
-        filesFiltered += processSubtitles(subFilename, CREDITS_LIST + tempList, logFile)
+    for i, subFilePath in enumerate(SUBFILES_LIST):
+        tempList = getIdentifyingVideoExp(subFilePath)
+        print('Processing file {0} of {1}: {2}'.format(i + 1, totalFiles, os.path.basename(subFilePath)))
+        filesFiltered += processSubtitles(subFilePath, CREDITS_LIST + tempList, logFile)
 
     print('\n{0} of {1} files were filtered'.format(filesFiltered, totalFiles))
+    print('SubFilter.log updated')
 
     time.sleep(2)
 
 
-def processSubtitles(subFilename, CREDITS_LIST, logFile):
+def processSubtitles(subFilePath, CREDITS_LIST, logFile):
     subfileContents = []
     subblock = []
     subblockList = []
     CREDITS_RE = re.compile('|'.join(CREDITS_LIST))
 
     # Check if subtitle file is readable
-    if not subFilename.endswith('.srt') or not os.access(subFilename, os.R_OK):
-        print('"' + subFilename + '"' + ' could not be opened for reading')
+    if not subFilePath.endswith('.srt') or not os.access(subFilePath, os.R_OK):
+        print('"{}" could not be opened for reading'.format(subFilePath))
         return 0
 
     # Read from subtitle file
-    encoding = getEncoding(subFilename)
+    encoding = getEncoding(subFilePath)
     # .test. line
     # encoding = 'iso8859_1'
 
     try:
-        with open(subFilename, 'r', encoding=encoding) as subFile:
+        with open(subFilePath, 'r', encoding=encoding) as subFile:
             subfileContents = [l for l in (line.strip() for line in subFile) if l]
     except UnicodeDecodeError as e:
         subFile.close()
-        print(' <> UnicodeDecodeError, {0}, {1}: {2}'.format(os.path.basename(subFilename), encoding, e))
-        logFile.write(' <> UnicodeDecodeError, {0}, {1}: {2}'.format(os.path.basename(subFilename), encoding, e))
+        print(' <> UnicodeDecodeError, {0}, {1}: {2}'.format(os.path.basename(subFilePath), encoding, e))
+        logFile.write(' <> UnicodeDecodeError, {0}, {1}: {2}'.format(os.path.basename(subFilePath), encoding, e))
         return 0
 
     subFile.close()
@@ -108,11 +109,11 @@ def processSubtitles(subFilename, CREDITS_LIST, logFile):
 
     # Open subtitle file for writing
     # .test. line.
-    # subFile = open(subFilename + '.TEST.srt', 'w', encoding=encoding)
-    subFile = open(subFilename, 'w', encoding=encoding)
+    # subFile = open(subFilePath + '.TEST.srt', 'w', encoding=encoding)
+    subFile = open(subFilePath, 'w', encoding=encoding)
 
-    print(' - Filtering subtitle: {0}\n'.format(subFilename))
-    logFile.write(' - Filtering subtitle: {0}\n\n'.format(subFilename))
+    print(' - Filtering subtitle: {0}\n'.format(subFilePath))
+    logFile.write(' - Filtering subtitle: {0}\n\n'.format(subFilePath))
 
     newSubblockList = []
     filterSubtitles(subblockList, newSubblockList, CREDITS_RE, logFile)
@@ -367,27 +368,28 @@ def fixExtraSpaces(subblock):
     subblock[:] = [' '.join(line.split()) for line in subblock]
 
 
-def getIdentifyingVideoExp(subFilename):
-    basename = os.path.basename(subFilename)
+def getIdentifyingVideoExp(subFilePath):
+    basename = os.path.basename(subFilePath)
     dirtStrings = []
 
     if EPISODE_BASENAME_RE.match(basename):
         mGroups = EPISODE_BASENAME_RE.match(basename).groups()
 
         seriesName = mGroups[0].lower()
-        seasonNum = mGroups[1]
-        episodeNum = mGroups[2]
+        seasonNum = int(mGroups[1])
+        episodeNum = int(mGroups[2])
         episodeTitle = mGroups[3].lower()
 
+        dirtStrings.append(r'{0} *x *\d?{1}'.format(seasonNum, episodeNum))
         dirtStrings.append('{0}.+{1}'.format(seriesName, episodeTitle))
-        dirtStrings.append('s(eason)?\D*0?{0}.*e(pisode)?\D*0?{1}(.*{2})?'.format(seasonNum, episodeNum, episodeTitle))
+        dirtStrings.append(r's(eason)?\D*\d?{0}.*e(pisode)?\D*\d?{1}(.*{2})?'.format(seasonNum, episodeNum, episodeTitle))
     elif MOVIE_BASENAME_RE.match(basename):
         mGroups = MOVIE_BASENAME_RE.match(basename).groups()
 
         movieName = mGroups[0].lower()
         movieYear = mGroups[1]
 
-        dirtStrings.append('{0}.*\(?{1}\)?'.format(movieName, movieYear))
+        dirtStrings.append(r'{0}.*\(?{1}\)?'.format(movieName, movieYear))
 
     return dirtStrings
 
@@ -397,8 +399,8 @@ def isTimeStamp(sTest):
     return m is not None
 
 
-def getEncoding(subFilename):
-    f = open(subFilename, 'rb')
+def getEncoding(subFilePath):
+    f = open(subFilePath, 'rb')
     raw_contents = f.read()
     encoding = chardet.detect(raw_contents)['encoding']
     f.close()
@@ -412,7 +414,7 @@ def getEncoding(subFilename):
 
 
 def fatal(errMsg):
-    print('[FATAL] ' + errMsg)
+    print('[FATAL] {}'.format(errMsg))
     print('[FATAL] Program is now exiting.')
     exit(1)
 
