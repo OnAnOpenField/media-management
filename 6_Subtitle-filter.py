@@ -381,8 +381,8 @@ def getIdentifyingVideoExp(subFilePath):
         episodeTitle = mGroups[3].lower()
 
         dirtStrings.append(r'{0} *x *\d?{1}'.format(seasonNum, episodeNum))
-        dirtStrings.append('{0}.+{1}'.format(seriesName, episodeTitle))
-        dirtStrings.append(r's(eason)?\D*\d?{0}.*e(pisode)?\D*\d?{1}(.*{2})?'.format(seasonNum, episodeNum, episodeTitle))
+        dirtStrings.append(r's(eason)?\D*\d?{0}.*e(pisode)?\D*\d?{1}'.format(seasonNum, episodeNum))
+        dirtStrings.append('({0}|{1}).*{2}'.format(re.escape(seriesName), episodeNum, re.escape(episodeTitle)))
     elif MOVIE_BASENAME_RE.match(basename):
         mGroups = MOVIE_BASENAME_RE.match(basename).groups()
 
