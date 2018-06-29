@@ -7,8 +7,8 @@ import re
 import time
 import sys
 
-FONT_TAG_RE = re.compile(r'(< *font.+?>).+?(< */? *font *>)', re.IGNORECASE)
-TEXT_FOR_HI_RE = re.compile(r'(\[|\(|\{).*?(\]|\)|\})')
+FONT_TAG_RE = re.compile(r'(< *font.+?>).*?(< */? *font *>)', re.DOTALL)
+TEXT_FOR_HI_RE = re.compile(r'[\[({].*?[\])}]', re.DOTALL)
 TIMESTAMP_RE = re.compile(r'[ ]*\d{1,2}:\d{1,2}:\d{1,2},\d{1,3} *-+> *\d{1,2}:\d{1,2}:\d{1,2},\d{1,3}[ ]*$')
 NON_SPOKEN_WORD_RE = re.compile(r'< *(?:i|b|strong) *>[\W_]*?< */? *(?:i|b|strong) *>|[\W_]')
 EPISODE_BASENAME_RE = re.compile(r'(.+) - S(\d\d)E(\d\d) - (.+)\.\w+')
@@ -260,15 +260,8 @@ def isNonSpokenLine(line):
 
 
 def removeFontTags(subblock):
-    text = ''
-    breakSpanList = []
+    text = '\n'.join(subblock) + '\n'
     groupsSpanList = []
-    prevIndex = 0
-
-    for line in subblock:
-        text += line + '<br>'
-        breakSpanList.append((prevIndex + len(line), prevIndex + len(line) + 4))
-        prevIndex += len(line) + 4
 
     matches = re.finditer(FONT_TAG_RE, text)
     for match in matches:
@@ -276,78 +269,49 @@ def removeFontTags(subblock):
             i += 1
             groupsSpanList.append(match.span(i))
 
-    i = 0
     tempLine = ''
     tempBlock = []
-
-    while i < len(text):
+    for i, char in enumerate(text):
         cont = False
-        k = 0
-        while k < len(breakSpanList):
-            if i == breakSpanList[k][0]:
-                i += 4
-                tempBlock.append(tempLine)
-                tempLine = ''
-                cont = True
-                break
-            k += 1
+        if char == '\n':
+            tempBlock.append(tempLine)
+            tempLine = ''
+            continue
 
-        m = 0
-        while m < len(groupsSpanList):
-            if i == groupsSpanList[m][0]:
-                i += groupsSpanList[m][1] - groupsSpanList[m][0]
+        for groupSpan in groupsSpanList:
+            if groupSpan[0] <= i and i < groupSpan[1]:
                 cont = True
                 break
-            m += 1
 
         if cont: continue
-        tempLine += text[i]
-        i += 1
+        tempLine += char
 
     subblock[:] = tempBlock
 
 
 def removeTextForHI(subblock):
-    prevIndex = 0
-    text = ''
-    breakSpanList = []
+    text = '\n'.join(subblock) + '\n'
     matchSpanList = []
-
-    for line in subblock:
-        text += line + '<br>'
-        breakSpanList.append((prevIndex + len(line), prevIndex + len(line) + 4))
-        prevIndex += len(line) + 4
 
     matches = re.finditer(TEXT_FOR_HI_RE, text)
     matchSpanList = [match.span() for match in matches]
 
-    i = 0
     tempLine = ''
     tempBlock = []
-
-    while i < len(text):
+    for i, char in enumerate(text):
         cont = False
-        k = 0
-        while k < len(breakSpanList):
-            if i == breakSpanList[k][0]:
-                i += 4
-                tempBlock.append(tempLine)
-                tempLine = ''
-                cont = True
-                break
-            k += 1
+        if char == '\n':
+            tempBlock.append(tempLine)
+            tempLine = ''
+            continue
 
-        m = 0
-        while m < len(matchSpanList):
-            if i == matchSpanList[m][0]:
-                i += matchSpanList[m][1] - matchSpanList[m][0]
+        for matchSpan in matchSpanList:
+            if matchSpan[0] <= i and i < matchSpan[1]:
                 cont = True
                 break
-            m += 1
 
         if cont: continue
-        tempLine += text[i]
-        i += 1
+        tempLine += char
 
     subblock[:] = tempBlock
 
@@ -381,7 +345,7 @@ def getIdentifyingVideoExp(subFilePath):
         episodeTitle = mGroups[3].lower()
 
         dirtStrings.append(r'{0} *x *\d?{1}'.format(seasonNum, episodeNum))
-        dirtStrings.append(r's(eason)?\D*\d?{0}.*e(pisode)?\D*\d?{1}'.format(seasonNum, episodeNum))
+        dirtStrings.append(r's(eason)?[\W_]*\d?{0}[\W_]*e(pisode)?[\W_]*\d?{1}'.format(seasonNum, episodeNum))
         dirtStrings.append('({0}|{1}).*{2}'.format(re.escape(seriesName), episodeNum, re.escape(episodeTitle)))
     elif MOVIE_BASENAME_RE.match(basename):
         mGroups = MOVIE_BASENAME_RE.match(basename).groups()
