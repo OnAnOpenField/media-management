@@ -32,6 +32,7 @@ sub.*ripped +by|ripped +by
 encod(ed|ing) +(done)? by
 sub[st].+(by|from|repaired|fixed)
 (re-?)?sync.+by
+sync *:
 web-?dl
 web-?rip
 pirate[ -]*bay
