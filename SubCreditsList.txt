@@ -30,7 +30,7 @@ correct(ions|ed) +by
 improved +by *:
 sub.*ripped +by|ripped +by
 encod(ed|ing) +(done)? by
-sub[st].+(by|from|repaired|fixed)
+subtitle.+(by|from|repaired|fixed)
 (re-?)?sync.+by
 sync *:
 web-?dl
