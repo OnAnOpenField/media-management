@@ -43,15 +43,14 @@ def main():
 
 def processMKV(videoPath):
     videoData = getVideoData(videoPath)
-
-    hasSubs = isVideoSubtitled(videoData['tracks'])
+    isSubtitled = isVideoSubtitled(videoData['tracks'])
     properAudioTracks, numberOfAudioTracks = getAudioTracks(videoData['tracks'])
 
     param = ''
 
-    if len(properAudioTracks) < numberOfAudioTracks:
+    if len(properAudioTracks) < numberOfAudioTracks and len(properAudioTracks) != 0:
         param += ' -a ' + ','.join(properAudioTracks)
-    if hasSubs:
+    if isSubtitled:
         param += ' -S '
 
     # .test line
