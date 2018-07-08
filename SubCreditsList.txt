@@ -27,9 +27,10 @@ addic7ed
 re-?sync
 sync.+correct(ed|ions?)|correct.+sync(c?ed)?
 correct(ions|ed) +by
+caption\w* +by
 improved +by *:
 sub.*ripped +by|ripped +by
-encod(ed|ing) +(done)? by
+encod(ed|ing) +(done)?by
 subtitle.+(by|from|repaired|fixed)
 (re-?)?sync.+by
 sync *:
@@ -37,4 +38,3 @@ web-?dl
 web-?rip
 pirate[ -]*bay
 torrent downloaded
-season.*\d.*episode.*\d
