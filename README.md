@@ -2,7 +2,7 @@
 Variety of scripts to manage video files and their attributes.
 
 These scripts utilize the [mkvmerge](https://mkvtoolnix.download/doc/mkvmerge.html) commandline utility, included 
-in the [MKVToolNix](https://mkvtoolnix.download/) toolset, to analyze videos, as well as [Subliminal's](https://subliminal.readthedocs.io/en/latest/) commandline component to download subtitles.
+in the [MKVToolNix](https://mkvtoolnix.download/) toolset, to analyze videos.
 
 ## Install instructions
 Download from the release page and run the setup batch file as administrator, then clone or download this repo.
