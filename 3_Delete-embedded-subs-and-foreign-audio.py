@@ -17,17 +17,20 @@ def main():
 
     config = configparser.ConfigParser()
     config.read('config.ini')
-    RECENT_VIDEOFILES_PATH = config['Paths']['RecentVideosPath']
+    RECENT_MEDIAFILES_PATH = config['Paths']['RecentMediaFilesPath']
     
-    if not os.path.isfile(RECENT_VIDEOFILES_PATH):
-        fatal(RECENT_VIDEOFILES_PATH + ' not found. Make sure to set the config.ini')
+    if not os.path.isfile(RECENT_MEDIAFILES_PATH):
+        fatal(RECENT_MEDIAFILES_PATH + ' not found. Make sure to set the config.ini')
 
     if len(sys.argv) < 2:
-        with open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8') as pathsFile:
-            videoList = [l for l in (line.strip() for line in pathsFile) if l and l.endswith('.mkv')]
+        with open(RECENT_MEDIAFILES_PATH, 'r', encoding='utf_8') as f:
+            recentFiles = json.load(f)
+        videoList = recentFiles['videos']
     else:
         videoList = [arg for arg in sys.argv[1:] if arg.endswith('.mkv')]
 
+
+    print('Removing extraneous tracks')
     nFiles = len(videoList)
 
     for i, videoPath in enumerate(videoList):

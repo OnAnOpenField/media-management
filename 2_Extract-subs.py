@@ -16,7 +16,7 @@ ALLOWED_LANGUAGES = ['eng', 'und']
 
 # subtitle extension identifiers for filename when checking if a subtitle companion exists for a video: eg. 'video_name.eng.srt'
 # types of subtitles to search for in mkv containers and their corresponding file extension
-# ordered in priority from most preferred to least
+# ordered from most preferred to least preferred
 ALLOWED_SUBS = {
     'SubRip/SRT': 'srt', 
     'SubStationAlpha': 'ass'
@@ -32,28 +32,30 @@ def main():
     global EXTRACT_FORCEDSUBS
     EXTRACT_FORCEDSUBS = config['DEFAULT']['ExtractForcedSubs'] == 'true'
     HONOR_SUBSBLACKLIST = config['DEFAULT']['HonorSubsBlacklist'] == 'true'
-    RECENT_VIDEOFILES_PATH = config['Paths']['RecentVideosPath']
+    RECENT_MEDIAFILES_PATH = config['Paths']['RecentMediaFilesPath']
     if HONOR_SUBSBLACKLIST: NOSUBS_LIST_PATH = config['Paths']['NoSubsListPath']
 
-    if not os.path.isfile(RECENT_VIDEOFILES_PATH):
-        fatal(RECENT_VIDEOFILES_PATH + ' not found. Make sure to set the config.ini')
+    if not os.path.isfile(RECENT_MEDIAFILES_PATH):
+        fatal(RECENT_MEDIAFILES_PATH + ' not found. Make sure to set the config.ini')
 
     if HONOR_SUBSBLACKLIST:
         if not os.path.isfile(NOSUBS_LIST_PATH):
             fatal(NOSUBS_LIST_PATH + ' not found. Make sure to set the config.ini')
-        with open(NOSUBS_LIST_PATH, 'r', encoding='utf_8') as noSubsPaths:
-            noSubsList = [l for l in (line.strip() for line in noSubsPaths) if l]
+        with open(NOSUBS_LIST_PATH, 'r', encoding='utf_8') as f:
+            noSubsList = json.load(f)
     else:
         noSubsList = []
 
 
     if len(sys.argv) < 2:
-        with open(RECENT_VIDEOFILES_PATH, 'r', encoding='utf_8') as pathsFile:
-            videoList = [l for l in (line.strip() for line in pathsFile) if l and l.endswith('.mkv')]
+        with open(RECENT_MEDIAFILES_PATH, 'r', encoding='utf_8') as f:
+            recentFiles = json.load(f)
+        videoList = recentFiles['videos']
     else:
         videoList = [arg for arg in sys.argv[1:] if arg.endswith('.mkv')]
 
 
+    print('Extracting subtitles')
     nFiles = len(videoList)
 
     for i, videoPath in enumerate(videoList):
@@ -74,21 +76,21 @@ def processVideo(videoPath):
 
     # Extract english sub, no forced, no SDH
     if not hasAccompanyingSubtitle(videoPath): 
-        extractSub(videoPath, videoData['tracks'], wantedLang='eng', excludedTrackNames=['commentary', 'no.*english', 'forced', 'foreign', r'\bSDH\b', '(deaf)?hard.*hearing', '(hearing)?.*impaired'])
+        extractSub(videoPath, videoData, wantedLang='eng', excludedTrackNames=['commentary', 'no.*english', 'forced', 'foreign', r'\bSDH\b', 'hard.*hearing', 'impaired'])
 
     # # If previous extraction failed, extract english SDH sub, no forced
     if not hasAccompanyingSubtitle(videoPath):
-        extractSub(videoPath, videoData['tracks'], wantedLang='eng', excludedTrackNames=['commentary', 'no.*english', 'forced', 'foreign'])
+        extractSub(videoPath, videoData, wantedLang='eng', excludedTrackNames=['commentary', 'no.*english', 'forced', 'foreign'])
 
     # # In spite of previous extractions, and if allowed by the config.ini, extract english forced sub
     if EXTRACT_FORCEDSUBS and not hasAccompanyingSubtitle(videoPath, extraIdentifier='.forced'):
-        extractSub(videoPath, videoData['tracks'], wantedLang='eng', extraIdentifier='.forced', allowForced=True)
+        extractSub(videoPath, videoData, wantedLang='eng', extraIdentifier='.forced', allowForced=True)
         # if forcedSubsMatchRegularSubs():
         #     delete *.FORCED.eng.<ext>
 
     # # If previous extractions failed, extract undefined language sub, no forced, allow SDH
     if not hasAccompanyingSubtitle(videoPath):
-        extractSub(videoPath, videoData['tracks'], wantedLang='und', excludedTrackNames=['commentary', 'forced'])
+        extractSub(videoPath, videoData, wantedLang='und', excludedTrackNames=['commentary', 'forced'])
 
 
 def hasAccompanyingSubtitle(videoPath, extraIdentifier=''):
@@ -107,11 +109,11 @@ def hasAccompanyingSubtitle(videoPath, extraIdentifier=''):
     return False
 
 
-def extractSub(videoPath, tracks, wantedLang='eng', extraIdentifier='', allowForced=False, excludedTrackNames=[]):
+def extractSub(videoPath, videoData, wantedLang='eng', extraIdentifier='', allowForced=False, excludedTrackNames=[]):
     filename, ext = os.path.splitext(videoPath)
 
     for wantedCodec in ALLOWED_SUBS:
-        for track in tracks:
+        for track in videoData['tracks']:
             if isWantedTrack(track, wantedLang, wantedCodec, allowForced, excludedTrackNames):
                 subExt = ALLOWED_SUBS[track['codec']]
                 print('')

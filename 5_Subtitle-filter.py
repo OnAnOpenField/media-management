@@ -2,6 +2,7 @@
 
 import chardet
 import configparser
+import json
 import os
 import re
 import time
@@ -39,12 +40,12 @@ def main():
     # Get paths from config.ini
     SUBFILTER_LOG_PATH = config['Paths']['LogFilePath']
     CREDITS_LIST_PATH = config['Paths']['SubCreditsListPath']
-    RECENT_SUBS_PATH = config['Paths']['RecentSubsPath']
+    RECENT_MEDIAFILES_PATH = config['Paths']['RecentMediaFilesPath']
 
     # Check if files are readable
     if not os.access(SUBFILTER_LOG_PATH, os.R_OK): fatal(SUBFILTER_LOG_PATH + ' could not be opened for reading')
     if not os.access(CREDITS_LIST_PATH, os.R_OK): fatal(CREDITS_LIST_PATH + ' could not be opened for reading')
-    if not os.access(RECENT_SUBS_PATH, os.R_OK): fatal(RECENT_SUBS_PATH + ' could not be opened for reading')
+    if not os.access(RECENT_MEDIAFILES_PATH, os.R_OK): fatal(RECENT_MEDIAFILES_PATH + ' could not be opened for reading')
 
     logFile = open(SUBFILTER_LOG_PATH, 'w', encoding='utf_8')
 
@@ -54,11 +55,12 @@ def main():
     SUBFILES_LIST = []
 
     with open(CREDITS_LIST_PATH, 'r', encoding='utf_8') as f:
-        CREDITS_LIST = [l for l in (line.strip() for line in f) if l]
+        CREDITS_LIST = json.load(f)
 
     if len(sys.argv) < 2:
-        with open(RECENT_SUBS_PATH, 'r', encoding='utf_8') as f:
-            SUBFILES_LIST = [l for l in (line.strip() for line in f) if l]
+        with open(RECENT_MEDIAFILES_PATH, 'r', encoding='utf_8') as f:
+            recentFiles = json.load(f)
+        SUBFILES_LIST = recentFiles['subtitles']
     else:
         SUBFILES_LIST = sys.argv[1:]
 
@@ -69,6 +71,7 @@ def main():
         print('Processing file {0} of {1}: {2}'.format(i + 1, totalFiles, os.path.basename(subFilePath)))
         filesFiltered += processSubtitles(subFilePath, CREDITS_LIST + tempList, logFile)
 
+    logFile.close()
     print('\n{0} of {1} files were filtered'.format(filesFiltered, totalFiles))
     print('SubFilter.log updated')
 
@@ -369,7 +372,7 @@ def getEncoding(subFilePath):
     encoding = chardet.detect(raw_contents)['encoding']
     f.close()
 
-    if b't\x00h\x00e\x00' in raw_contents:  # only for english-written files. looks for byte sequence that resolves to 'the'
+    if b' \x00t\x00h\x00e\x00 \x00' in raw_contents:  # only for english-written files. looks for byte sequence that resolves to ' the '
         return 'utf_16_le'
     elif encoding == 'ascii':
         return 'utf_8'
