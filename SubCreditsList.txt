@@ -1,40 +1,42 @@
-www\.\w+
-\w{3,}\.com\b
-\w{3,}\.net\b
-\w{3,}\.org\b
-\w{3,}\.tk\b
-\w{3,}\.io\b
-\w{3,}\.info\b
-\w{3,}\.ru\b
-\w{3,}\.uk\b
-\w{3,}\.ca\b
-\w{3,}\.de\b
-\w{3,}\.au\b
-\w{3,}\.fr\b
-\w{3,}\.es\b
-https?://
-rarbg
-thetvdb
-open *subtitles
-napiprojekt
-tvsubtitles
-thesubdb
-legendastv
-addic7ed
-%url%
-\bSDH\b
-[ ]+by *:
-re-?sync
-sync.+correct(ed|ions?)|correct.+sync(c?ed)?
-correct(ions|ed) +by
-caption\w* +by
-improved +by *:
-sub.*ripped +by|ripped +by
-encod(ed|ing) +(done)?by
-subtitle.+(by|from|repaired|fixed)
-(re-?)?sync.+by
-sync *:
-web-?dl
-web-?rip
-pirate[ -]*bay
-torrent downloaded
+[
+    "www\\.\\w+",
+    "\\w{3,}\\.com\\b",
+    "\\w{3,}\\.net\\b",
+    "\\w{3,}\\.org\\b",
+    "\\w{3,}\\.tk\\b",
+    "\\w{3,}\\.io\\b",
+    "\\w{3,}\\.info\\b",
+    "\\w{3,}\\.ru\\b",
+    "\\w{3,}\\.uk\\b",
+    "\\w{3,}\\.ca\\b",
+    "\\w{3,}\\.de\\b",
+    "\\w{3,}\\.au\\b",
+    "\\w{3,}\\.fr\\b",
+    "\\w{3,}\\.es\\b",
+    "https?://",
+    "rarbg",
+    "thetvdb",
+    "open *subtitles",
+    "napiprojekt",
+    "tvsubtitles",
+    "thesubdb",
+    "legendastv",
+    "addic7ed",
+    "%url%",
+    "\\bsdh\\b",
+    "[ ]+by *:",
+    "re-?sync",
+    "sync.+correct(ed|ions?)|correct.+sync(c?ed)?",
+    "correct(ions|ed) +by",
+    "caption\\w* +by",
+    "improved +by *:",
+    "sub.*ripped +by|ripped +by",
+    "encod(ed|ing) +(done)?by",
+    "subtitle.+(by|from|repaired|fixed)",
+    "(re-?)?sync.+by",
+    "sync *:",
+    "web-?dl",
+    "web-?rip",
+    "pirate[ -]*bay",
+    "torrent downloaded"
+]
