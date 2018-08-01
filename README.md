@@ -15,8 +15,8 @@ OS's built-in scheduling software to run while you sleep, such as Task Scheduler
 
 These scripts will:
 
-1. Get the most recent videos and list them in a txt file, and
-2. Extract embedded SRT subtitles from MKVs
-3. Remove embedded subtitles from video files and any non-english audio tracks, as well as english commentary tracks
-4. Get the most recent subtitle files and list them in a txt file
-5. Remove ads from SRT subtitles based on commonly used expressions included in SubCreditsList.txt, strip color coding from text, and remove HI/SDH lines
+1. Get the most recent videos and list them in a json file, and
+2. Extract embedded SRT or ASS subtitles from MKV files
+3. Remove embedded subtitles from video files and any "foreign" language audio tracks, as well as commentary tracks
+4. Get the most recent subtitle files and list them in a json file
+5. Remove ads from SRT subtitles based on commonly used expressions included in SubCreditsList.json, strip color coding from text, and remove HI/SDH lines
