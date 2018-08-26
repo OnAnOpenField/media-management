@@ -44,7 +44,6 @@ def main():
         json.dump(recentFiles, f, indent=4)                            
 
     print('\nDone')
-    time.sleep(2)
     
 
 def fatal(errMsg):
@@ -61,3 +60,5 @@ def getCrTime(file):
 
 if __name__ == '__main__':
     main()
+    time.sleep(2)
+    

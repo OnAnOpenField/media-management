@@ -41,7 +41,6 @@ def main():
         processMKV(videoPath)
             
     print('\nDone')
-    time.sleep(2)
 
 
 def processMKV(videoPath):
@@ -125,3 +124,5 @@ def fatal(errMsg):
 
 if __name__ == '__main__':
     main()
+    time.sleep(2)
+    

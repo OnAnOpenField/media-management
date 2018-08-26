@@ -45,7 +45,6 @@ def main():
 
 
     print('\nDone')
-    time.sleep(2)
     
 
 def fatal(errMsg):
@@ -62,3 +61,5 @@ def getCrTime(file):
     
 if __name__ == '__main__':
     main()
+    time.sleep(2)
+    

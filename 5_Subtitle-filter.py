@@ -45,7 +45,7 @@ def main():
     # Check if files are readable
     if not os.access(SUBFILTER_LOG_PATH, os.R_OK): fatal(SUBFILTER_LOG_PATH + ' could not be opened for reading')
     if not os.access(CREDITS_LIST_PATH, os.R_OK): fatal(CREDITS_LIST_PATH + ' could not be opened for reading')
-    if not os.access(RECENT_MEDIAFILES_PATH, os.R_OK): fatal(RECENT_MEDIAFILES_PATH + ' could not be opened for reading')
+    if len(sys.argv) < 2 and if not os.access(RECENT_MEDIAFILES_PATH, os.R_OK): fatal(RECENT_MEDIAFILES_PATH + ' could not be opened for reading')
 
     logFile = open(SUBFILTER_LOG_PATH, 'w', encoding='utf_8')
 
@@ -74,8 +74,6 @@ def main():
     logFile.close()
     print('\n{0} of {1} files were filtered'.format(filesFiltered, totalFiles))
     print('SubFilter.log updated')
-
-    time.sleep(2)
 
 
 def processSubtitles(subFilePath, CREDITS_LIST, logFile):
@@ -367,10 +365,10 @@ def isTimeStamp(sTest):
 
 
 def getEncoding(subFilePath):
-    f = open(subFilePath, 'rb')
-    raw_contents = f.read()
+    with open(subFilePath, 'rb') as f:
+        raw_contents = f.read()
+    
     encoding = chardet.detect(raw_contents)['encoding']
-    f.close()
 
     if b' \x00t\x00h\x00e\x00 \x00' in raw_contents:  # only for english-written files. looks for byte sequence that resolves to ' the '
         return 'utf_16_le'
@@ -388,3 +386,4 @@ def fatal(errMsg):
 
 if __name__ == '__main__':
     main()
+    time.sleep(2)

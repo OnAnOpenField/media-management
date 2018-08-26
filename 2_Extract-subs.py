@@ -46,14 +46,12 @@ def main():
     else:
         noSubsList = []
 
-
     if len(sys.argv) < 2:
         with open(RECENT_MEDIAFILES_PATH, 'r', encoding='utf_8') as f:
             recentFiles = json.load(f)
         videoList = recentFiles['videos']
     else:
         videoList = [arg for arg in sys.argv[1:] if arg.endswith('.mkv')]
-
 
     print('Extracting subtitles')
     nFiles = len(videoList)
@@ -68,7 +66,6 @@ def main():
         processVideo(videoPath)
 
     print('\nDone')
-    time.sleep(2)
 
 
 def processVideo(videoPath):
@@ -160,3 +157,5 @@ def fatal(errMsg):
 
 if __name__ == '__main__':
     main()
+    time.sleep(2)
+    
