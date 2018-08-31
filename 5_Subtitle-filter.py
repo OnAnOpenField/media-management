@@ -45,7 +45,7 @@ def main():
     # Check if files are readable
     if not os.access(SUBFILTER_LOG_PATH, os.R_OK): fatal(SUBFILTER_LOG_PATH + ' could not be opened for reading')
     if not os.access(CREDITS_LIST_PATH, os.R_OK): fatal(CREDITS_LIST_PATH + ' could not be opened for reading')
-    if len(sys.argv) < 2 and if not os.access(RECENT_MEDIAFILES_PATH, os.R_OK): fatal(RECENT_MEDIAFILES_PATH + ' could not be opened for reading')
+    if len(sys.argv) < 2 and not os.access(RECENT_MEDIAFILES_PATH, os.R_OK): fatal(RECENT_MEDIAFILES_PATH + ' could not be opened for reading')
 
     logFile = open(SUBFILTER_LOG_PATH, 'w', encoding='utf_8')
 
