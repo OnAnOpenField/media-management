@@ -8,7 +8,7 @@ import sys
 import time
 
 # list of languages to keep in mkv. any others are considered foreign
-ALLOWED_LANGUAGES = ['eng', 'spa', 'und']
+ALLOWED_LANGUAGES = ['eng', 'und']
 EXCLUDED_TRACK_NAMES = ['commentary', 'cast']
 
 def main():
