@@ -23,7 +23,9 @@ ALLOWED_SUBS = {
 }
 
 def main():
-    if not os.path.isfile('config.ini'): fatal('Cannot find "config.ini"')
+    if not os.path.isfile('config.ini'):
+        fatal('Cannot find "config.ini"')
+        
     # open config.ini for reading
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -81,7 +83,7 @@ def processVideo(videoPath):
 
     # # In spite of previous extractions, and if allowed by the config.ini, extract english forced sub
     if EXTRACT_FORCEDSUBS and not hasAccompanyingSubtitle(videoPath, extraIdentifier='.forced'):
-        extractSub(videoPath, videoData, wantedLang='eng', extraIdentifier='.forced', allowForced=True)
+        extractSub(videoPath, videoData, wantedLang='eng', extraIdentifier='forced', allowForced=True)
         # if forcedSubsMatchRegularSubs():
         #     delete *.FORCED.eng.<ext>
 
@@ -91,6 +93,8 @@ def processVideo(videoPath):
 
 
 def hasAccompanyingSubtitle(videoPath, extraIdentifier=''):
+    if extraIdentifier: extraIdentifier = '.' + extraIdentifier
+
     dirname = os.path.dirname(videoPath)
     # basename == '$filename.$ext'
     basename = os.path.basename(videoPath)
@@ -99,7 +103,7 @@ def hasAccompanyingSubtitle(videoPath, extraIdentifier=''):
 
     for codec in ALLOWED_SUBS:
         for lang in ALLOWED_LANGUAGES:
-            subtitleName = '{0}{1}{2}{3}'.format(filename, extraIdentifier, '.' + lang, '.' + ALLOWED_SUBS[codec])
+            subtitleName = '{0}{1}{2}{3}'.format(filename, '.' + lang, extraIdentifier, '.' + ALLOWED_SUBS[codec])
             if os.path.isfile(os.path.join(dirname, subtitleName)):
                 return True
 
@@ -107,6 +111,8 @@ def hasAccompanyingSubtitle(videoPath, extraIdentifier=''):
 
 
 def extractSub(videoPath, videoData, wantedLang='eng', extraIdentifier='', allowForced=False, excludedTrackNames=[]):
+    if extraIdentifier: extraIdentifier = '.' + extraIdentifier
+    
     filename, ext = os.path.splitext(videoPath)
 
     for wantedCodec in ALLOWED_SUBS:
@@ -114,7 +120,7 @@ def extractSub(videoPath, videoData, wantedLang='eng', extraIdentifier='', allow
             if isWantedTrack(track, wantedLang, wantedCodec, allowForced, excludedTrackNames):
                 subExt = ALLOWED_SUBS[track['codec']]
                 print('')
-                subprocess.call('mkvextract tracks "{0}" {1}:"{2}"'.format(videoPath, track['id'], filename + extraIdentifier+ '.' + wantedLang + '.' + subExt), shell=True)
+                subprocess.call('mkvextract tracks "{0}" {1}:"{2}"'.format(videoPath, track['id'], filename + '.' + wantedLang + extraIdentifier + '.' + subExt), shell=True)
                 print('')
                 return
 
