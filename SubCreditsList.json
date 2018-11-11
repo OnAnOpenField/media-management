@@ -32,7 +32,7 @@
     "improved +by *:",
     "sub.*ripped +by|ripped +by",
     "encod(ed|ing) +(done)?by",
-    "subtitle.+(by|from|repaired|fixed)",
+    "subtitle.+(by|from|repaired|fixed)|subs? +by",
     "(re-?)?sync.+by",
     "sync *:",
     "web-?dl",
